@@ -6,16 +6,16 @@
  * to the Mastra backend in `../backend` — the Angular/Mastra quickstart defers
  * the backend step to "register this backend as the `default` agent".
  *
- * That backend is a standard Mastra project (`mastra dev`), which serves its
- * registered agents over Mastra's HTTP API on port 4111 rather than a raw AG-UI
- * endpoint. `@ag-ui/mastra` is the bridge: `MastraAgent` wraps a Mastra agent
- * handle and speaks AG-UI to the runtime, so no generic `HttpAgent` is needed.
- * `MastraClient` from `@mastra/client-js` produces the remote handle for an
- * agent registered in `backend/src/mastra/index.ts`.
+ * `@ag-ui/mastra` is the bridge: `MastraAgent` wraps a Mastra agent and speaks
+ * AG-UI to the runtime, so no generic `HttpAgent` is needed. The Mastra
+ * instance is imported directly from `backend/src/mastra`, so
+ * `MastraAgent.getLocalAgent` runs the agent in THIS process — there is no
+ * second server and no HTTP hop to the agent.
  *
- * `default` and `support` resolve to the same Mastra agent, each wrapped in its
- * own `MastraAgent` instance. `support` exists so the doc snippets that use
- * `agentId="support"` (Chat UI, Threads) run verbatim.
+ * `default` and `support` resolve to the same Mastra agent under two ids, each
+ * with its own `resourceId` so their memory does not collide. `support` exists
+ * so the doc snippets that use `agentId="support"` (Chat UI, Threads) run
+ * verbatim.
  *
  * `a2ui: {}` enables A2UIMiddleware for every registered agent, per
  * https://docs.copilotkit.ai/angular/mastra/backend/copilot-runtime
@@ -24,7 +24,6 @@ import { createServer } from "node:http";
 import { CopilotRuntime } from "@copilotkit/runtime/v2";
 import { createCopilotNodeListener } from "@copilotkit/runtime/v2/node";
 import { MastraAgent } from "@ag-ui/mastra";
-import { MastraClient } from "@mastra/client-js";
 import { mastra } from '../backend/src/mastra';
 
 const runtime = new CopilotRuntime({

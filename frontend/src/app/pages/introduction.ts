@@ -38,26 +38,29 @@ import { DOC_SYNC_DATE, NAV } from '../lib/nav-config';
   &#124;  POST http://localhost:8200/api/copilotkit
   v
 Copilot Runtime  ·  localhost:8200        &#8592; Node, frontend/server.ts
-  &#124;  agents: &#123; default, support &#125; &#8594; new MastraAgent(&#123; agent &#125;)
-  &#124;  POST http://localhost:4111/api/…  &#8592; &#64;mastra/client-js, AG-UI over SSE
+  &#124;  agents: &#123; default, support &#125;
+  &#124;  MastraAgent.getLocalAgent(&#123; mastra, agentId &#125;)  &#8592; in-process
   v
-Mastra agent  ·  localhost:4111           &#8592; Node, mastra dev
-  &#124;  new Mastra(&#123; agents: &#123; myAgent &#125; &#125;) in backend/src/mastra/index.ts
+Mastra agent                              &#8592; imported from backend/src/mastra
   v
 OpenAI</code></pre>
 
         <p class="mt-3 text-sm text-slate-700">
-          Three processes, not two. Unlike the React quickstart — where the
-          runtime lives inside the Next app — Angular has no server route, so
-          the runtime is its own Node process. The model key only ever reaches
-          the Mastra process.
+          Two processes, not three. The agent runs inside the runtime process —
+          <code>server.ts</code> imports the Mastra instance directly, so there
+          is no second server and no HTTP hop to the agent. Unlike the React
+          quickstart — where the runtime lives inside the Next app — Angular has
+          no server route, so the runtime is still its own Node process. The
+          model key only ever reaches that process.
         </p>
       </ui-panel>
 
-      <ui-callout title="Both backends must be running">
-        The chat will not stream if either process is down. Start the Mastra
-        agent with <code>npm run dev</code> from <code>backend/</code>, and the
-        runtime with <code>npm run runtime</code> from <code>frontend/</code>.
+      <ui-callout title="The runtime must be running">
+        The chat will not stream if the runtime is down. Start it with
+        <code>npm run runtime</code> from <code>frontend/</code>, or
+        <code>npm run dev</code> to start it alongside the Angular dev server.
+        <code>OPENAI_API_KEY</code> has to be exported in that process's
+        environment.
       </ui-callout>
 
       <ui-panel heading="Routes">

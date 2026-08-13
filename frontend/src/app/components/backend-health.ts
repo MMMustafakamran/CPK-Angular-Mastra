@@ -6,19 +6,15 @@ interface Probe {
   hint: string;
   ok: boolean | null;
   detail: string;
-  /**
-   * Treat any HTTP response as "reachable", not just a 2xx. A probing GET
-   * against the Mastra server can answer a non-2xx status — which still proves
-   * the process is listening.
-   */
-  anyStatus?: boolean;
 }
 
 /**
- * Live connection check for the two processes this harness talks to.
+ * Live connection check for the one process this harness talks to.
  *
- * The runtime probe is the check the Angular quickstart's troubleshooting box
- * prescribes: `/api/copilotkit/info` should report the registered agents.
+ * The Mastra agent runs inside the Copilot Runtime process, so there is no
+ * second endpoint to probe — if the runtime answers and lists its agents, the
+ * agent is loaded. This is the check the Angular quickstart's troubleshooting
+ * box prescribes: `/api/copilotkit/info` should report the registered agents.
  */
 @Component({
   selector: 'app-backend-health',
@@ -85,14 +81,6 @@ export class BackendHealth {
       ok: null,
       detail: '',
     },
-    {
-      label: 'Mastra agent',
-      url: 'http://localhost:4111/api/agents',
-      hint: 'Start it with: npm run dev (from backend/)',
-      ok: null,
-      detail: '',
-      anyStatus: true,
-    },
   ]);
 
   constructor() {
@@ -107,7 +95,7 @@ export class BackendHealth {
           const response = await fetch(probe.url, { method: 'GET' });
           return {
             ...probe,
-            ok: probe.anyStatus ? true : response.ok,
+            ok: response.ok,
             detail: `${response.status} from ${probe.url}`,
           };
         } catch {
