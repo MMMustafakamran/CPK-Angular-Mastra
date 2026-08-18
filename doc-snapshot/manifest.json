@@ -1,0 +1,128 @@
+{
+  "schema": 1,
+  "docsRoot": "https://docs.copilotkit.ai/angular/mastra",
+  "syncedAt": "2026-08-18T06:58:29.541Z",
+  "pages": {
+    "/angular/mastra": {
+      "file": "angular__mastra.md",
+      "sha256": "16e08eb6677ab621d0b7954796525974e2f2148636488fb9a88a286d71af2356",
+      "bytes": 6725,
+      "lines": 172,
+      "routes": [
+        "/",
+        "/doc-sync"
+      ],
+      "status": "ok",
+      "age": 0,
+      "date": "Tue, 18 Aug 2026 06:58:30 GMT"
+    },
+    "/angular/mastra/guides/a2ui": {
+      "file": "angular__mastra__guides__a2ui.md",
+      "sha256": "96f556d27a95b4f10025a874757be3700b61bae23e52706e0159b0064bb22c5c",
+      "bytes": 5833,
+      "lines": 195,
+      "routes": [
+        "/a2ui"
+      ],
+      "status": "ok",
+      "age": 0,
+      "date": "Tue, 18 Aug 2026 06:58:30 GMT"
+    },
+    "/angular/mastra/guides/chat-ui": {
+      "file": "angular__mastra__guides__chat-ui.md",
+      "sha256": "4a42db62d09a0f8c8c43faf0980404dd7357c97ec2e118c1a564b4c6c6e3b3fc",
+      "bytes": 5129,
+      "lines": 178,
+      "routes": [
+        "/chat-ui"
+      ],
+      "status": "ok",
+      "age": 0,
+      "date": "Tue, 18 Aug 2026 06:58:30 GMT"
+    },
+    "/angular/mastra/guides/frontend-tools-generative-ui": {
+      "file": "angular__mastra__guides__frontend-tools-generative-ui.md",
+      "sha256": "06e3972276969986984eec48f4145c90114a9e4efeb350c0051c14c67460b98b",
+      "bytes": 5728,
+      "lines": 178,
+      "routes": [
+        "/frontend-tools-generative-ui"
+      ],
+      "status": "ok",
+      "age": 0,
+      "date": "Tue, 18 Aug 2026 06:58:30 GMT"
+    },
+    "/angular/mastra/guides/human-in-the-loop": {
+      "file": "angular__mastra__guides__human-in-the-loop.md",
+      "sha256": "ca7f272c29909e23b5959b7a73389484d4c54a171cf5a0c4aa12e53bb3748ea4",
+      "bytes": 7172,
+      "lines": 227,
+      "routes": [
+        "/human-in-the-loop"
+      ],
+      "status": "ok",
+      "age": 0,
+      "date": "Tue, 18 Aug 2026 06:58:30 GMT"
+    },
+    "/angular/mastra/guides/shared-state": {
+      "file": "angular__mastra__guides__shared-state.md",
+      "sha256": "1739ff6bdfb8656623af42b1e52c754a7b83953facc30e7d1f7b0ec73eaf053d",
+      "bytes": 4722,
+      "lines": 151,
+      "routes": [
+        "/shared-state"
+      ],
+      "status": "ok",
+      "age": 0,
+      "date": "Tue, 18 Aug 2026 06:58:30 GMT"
+    },
+    "/angular/mastra/guides/threads-memory-attachments-headless": {
+      "file": "angular__mastra__guides__threads-memory-attachments-headless.md",
+      "sha256": "ad73f29742473699e726a15a28ecbdd874d8eb44e878fbac91a066a52785237b",
+      "bytes": 8932,
+      "lines": 302,
+      "routes": [
+        "/threads",
+        "/memory",
+        "/attachments",
+        "/headless"
+      ],
+      "status": "ok",
+      "age": 0,
+      "date": "Tue, 18 Aug 2026 06:58:30 GMT"
+    },
+    "/angular/mastra/guides/voice-multimodal": {
+      "file": "angular__mastra__guides__voice-multimodal.md",
+      "sha256": "f33cac2773e3ed52dab20e945cf6ea0fc8e8da2421a1e56ee73e96464c465d26",
+      "bytes": 3782,
+      "lines": 111,
+      "routes": [
+        "/voice-multimodal"
+      ],
+      "status": "ok",
+      "age": 0,
+      "date": "Tue, 18 Aug 2026 06:58:30 GMT"
+    },
+    "/angular/mastra/quickstart": {
+      "file": "angular__mastra__quickstart.md",
+      "sha256": "16e08eb6677ab621d0b7954796525974e2f2148636488fb9a88a286d71af2356",
+      "bytes": 6725,
+      "lines": 172,
+      "routes": [
+        "/quickstart"
+      ],
+      "status": "ok",
+      "age": 0,
+      "date": "Tue, 18 Aug 2026 06:58:30 GMT"
+    }
+  },
+  "sitemap": {
+    "fetchedAt": "2026-08-18T06:58:29.541Z",
+    "urlsUnderRoot": 4,
+    "knownUnmapped": [
+      "https://docs.copilotkit.ai/angular/mastra/ag-ui",
+      "https://docs.copilotkit.ai/angular/mastra/background-tasks",
+      "https://docs.copilotkit.ai/angular/mastra/copilot-runtime"
+    ]
+  }
+}
