@@ -200,3 +200,66 @@ Commit `doc-snapshot/` — `pages/`, `manifest.json` and `CHANGELOG.md` are the 
 
 ---
 
+## Automated Screen Recording Suite
+
+Lives in [`autorecorder/`](autorecorder/) — a portable Playwright suite shared across CopilotKit framework repos and adapted to this one through `config/` and `actions/` only.
+See [`autorecorder/README.md`](autorecorder/README.md) for the full contract.
+
+Once the runtime (`:8200`) and frontend dev server (`:4200`) are running:
+
+```bash
+cd autorecorder
+npm install
+npx playwright install chromium
+
+npm run doctor            # validate the configuration (exits 1 on error)
+npm run doctor:online     # also probe every doc/demo URL and the selectors
+npm run record -- --list  # what will be recorded
+
+# Record all pages in nav order
+npm run record
+
+# Record a specific page individually
+npm run record -- --quickstart
+npm run record -- --page=chat-ui
+npm run record -- --filter=threads
+```
+
+Recordings are saved to `autorecorder/videos/`. That folder is gitignored as build output.
+
+---
+
+## Upgrading Packages
+
+### Frontend
+
+```bash
+cd frontend
+# Check and update dependencies in package.json to latest versions
+npx npm-check-updates -u
+# Ensure TypeScript remains compatible with Angular 22 (pinned to ~6.0.2)
+npm install --save-dev typescript@~6.0.2
+# Install updated dependencies (use --legacy-peer-deps if peer resolution conflicts arise)
+npm install --legacy-peer-deps
+```
+
+### Backend
+
+```bash
+cd backend
+# Check and update dependencies in package.json to latest versions
+npx npm-check-updates -u
+# Install updated dependencies (use --legacy-peer-deps if peer resolution conflicts arise)
+npm install --legacy-peer-deps
+```
+
+### Autorecorder
+
+```bash
+cd autorecorder
+# Check and update dependencies in package.json to latest versions
+npx npm-check-updates -u
+# Install updated dependencies
+npm install
+```
+
