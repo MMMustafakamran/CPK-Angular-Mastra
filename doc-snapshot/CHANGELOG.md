@@ -8,6 +8,63 @@ Holds the 3 most recent dated entries. When a change lands on a fourth
 date, the oldest entry is dropped. Entries are counted, not aged, so a gap of
 weeks between changes does not expire anything.
 
+## 2026-08-21
+
+### 10:36 UTC — 3 pages, highest severity high
+
+**High — Human-in-the-loop and interrupts**
+
+`/angular/mastra/guides/human-in-the-loop` · route `/human-in-the-loop` · under “Human-in-the-loop and interrupts”
+
+26 code lines, 3 headings, 26 prose lines changed. The number of fenced code blocks changed.
+
+````diff
+- | Interrupt | The backend agent emits an AG-UI interrupt | `injectInterrupt` |
++ | Interrupt | The backend agent emits an AG-UI interrupt | `AgentStore.interruptController`, `injectInterrupt` |
+- ## Handle an interrupt
++ ## Handle an interrupt from the store
++ An interrupt is a state of one conversation: this agent, this thread, this run
++ is waiting for a decision. The store that already exposes that conversation's
++ messages and state exposes its pending interrupt too, so a component that holds
++ a store needs nothing else:
+````
+
+**Medium — Introduction**
+
+`/angular/mastra` · routes `/`, `/doc-sync` · under “Run the backend, runtime, and Angular app”
+
+1 heading, 11 prose lines changed.
+
+````diff
++ <Step>
++ ### Open Inspector and confirm setup
++ 
++ Angular does not mount Inspector by default. First follow [Inspector for Angular](/angular/mastra/inspector). Then, on localhost, click the Inspector button.
++ 
++ 1. Open **Agents**, then **Agent**. Your agent is listed.
++ 2. Send a chat message. Open **Agents**, then **AG-UI Events**. Events are moving.
++ 3. Open **Threads**. The list is unlocked (Intelligence is on), or locked with Enable Intelligence (Intelligence is off).
+````
+
+**Medium — Quickstart**
+
+`/angular/mastra/quickstart` · route `/quickstart` · under “Run the backend, runtime, and Angular app”
+
+1 heading, 11 prose lines changed.
+
+````diff
++ <Step>
++ ### Open Inspector and confirm setup
++ 
++ Angular does not mount Inspector by default. First follow [Inspector for Angular](/angular/mastra/inspector). Then, on localhost, click the Inspector button.
++ 
++ 1. Open **Agents**, then **Agent**. Your agent is listed.
++ 2. Send a chat message. Open **Agents**, then **AG-UI Events**. Events are moving.
++ 3. Open **Threads**. The list is unlocked (Intelligence is on), or locked with Enable Intelligence (Intelligence is off).
+````
+
+---
+
 ## 2026-08-18
 
 ### 06:58 UTC — 3 pages, highest severity high

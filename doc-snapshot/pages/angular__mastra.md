@@ -2,6 +2,7 @@
 
 > Connect an Angular app to Copilot Runtime with CopilotKit.
 
+
 `@copilotkit/angular` provides Angular components, directives, and services for CopilotKit. This guide gets you to a working Angular app with a chat UI backed by [Copilot Runtime](/angular/mastra/backend/copilot-runtime). When you select an agent backend in the sidebar, the backend step below changes with it; without a selection, the guide uses CopilotKit's `BuiltInAgent`.
 
 The runtime runs on your server, keeps model credentials out of the browser, and exposes the `default` agent that `CopilotChat` uses automatically.
@@ -158,6 +159,18 @@ headless APIs, and it supports zoneless applications.
         Angular → Copilot Runtime → your selected agent backend.
       </Step>
     
+    <Step>
+        ### Open Inspector and confirm setup
+
+Angular does not mount Inspector by default. First follow [Inspector for Angular](/angular/mastra/inspector). Then, on localhost, click the Inspector button.
+
+1. Open **Agents**, then **Agent**. Your agent is listed.
+2. Send a chat message. Open **Agents**, then **AG-UI Events**. Events are moving.
+3. Open **Threads**. The list is unlocked (Intelligence is on), or locked with Enable Intelligence (Intelligence is off).
+
+More detail: [Inspector](/angular/mastra/inspector).
+
+    </Step>
 
 </Steps>
 
