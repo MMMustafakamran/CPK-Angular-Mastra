@@ -46,7 +46,10 @@ import { Callout, Panel, SourceCode, TryIt } from '../components/ui';
               <td class="py-2 pr-4">
                 The backend agent emits an AG-UI interrupt
               </td>
-              <td class="py-2"><code>injectInterrupt</code></td>
+              <td class="py-2">
+                <code>AgentStore.interruptController</code>,
+                <code>injectInterrupt</code>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -99,6 +102,34 @@ import { Callout, Panel, SourceCode, TryIt } from '../components/ui';
         </p>
         <ui-source path="src/app/features/hitl/interrupt-panel.component.ts" />
       </ui-panel>
+
+      <ui-callout
+        tone="warn"
+        title="Known issue — the store interrupt API is documented but not published"
+      >
+        <p>
+          The guide's <strong>Handle an interrupt from the store</strong> section
+          (added 2026-08-21) reads the pending decision off
+          <code>store().interruptController</code>. That member does not exist in
+          <code>&#64;copilotkit/angular&#64;0.3.1</code>, the current
+          <code>latest</code> on npm, nor in the newest
+          <code>0.3.2-canary</code>: <code>AgentStore</code> declares only
+          <code>agent</code>, <code>isRunning</code>, <code>messages</code>, and
+          <code>state</code>. In the shipped build
+          <code>injectInterrupt</code> constructs its own
+          <code>InterruptController</code> and connects it to
+          <code>store().agent</code> — the store owns no controller to read.
+        </p>
+        <p class="mt-2">
+          The same section rewrites the call as
+          <code>injectInterrupt&lt;T&gt;("default")</code>, but the published
+          signature takes only <code>InjectInterruptOptions</code>, so the string
+          form is a type error. Both snippets are left unimplemented here rather
+          than approximated — see
+          <code>project-context.md</code>: documentation defects are reported,
+          not patched in the project.
+        </p>
+      </ui-callout>
     </div>
   `,
 })

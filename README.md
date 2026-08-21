@@ -109,7 +109,7 @@ Docs last synced **2026-08-12**.
 | [/frontend-tools-generative-ui](https://docs.copilotkit.ai/angular/mastra/guides/frontend-tools-generative-ui) | Working | |
 | [/a2ui](https://docs.copilotkit.ai/angular/mastra/guides/a2ui) | Partial | Inert until a catalog is supplied — see Known issues |
 | [/voice-multimodal](https://docs.copilotkit.ai/angular/mastra/guides/voice-multimodal) | Partial | Microphone records, but no transcription service is configured |
-| [/human-in-the-loop](https://docs.copilotkit.ai/angular/mastra/guides/human-in-the-loop) | Working | Tool path is live; interrupt panel idles until the agent suspends a tool |
+| [/human-in-the-loop](https://docs.copilotkit.ai/angular/mastra/guides/human-in-the-loop) | Working | Tool path is live; interrupt panel idles until the agent suspends a tool. The guide's `store().interruptController` section is unimplemented — that API is in no published build |
 | [/shared-state](https://docs.copilotkit.ai/angular/mastra/guides/shared-state) | Working | |
 | [/threads](https://docs.copilotkit.ai/angular/mastra/guides/threads-memory-attachments-headless) | Partial · premium | Thread endpoints need an Enterprise Intelligence license |
 | [/memory](https://docs.copilotkit.ai/angular/mastra/guides/threads-memory-attachments-headless) | Partial · premium | Runtime provides no memory routes, so `isAvailable()` is false |

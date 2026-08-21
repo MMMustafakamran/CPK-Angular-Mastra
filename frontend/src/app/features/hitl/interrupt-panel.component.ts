@@ -1,7 +1,13 @@
 /**
- * "Handle an interrupt", verbatim. The controller is headless, so this panel
- * renders nothing until the backend emits an AG-UI interrupt.
+ * "Handle an interrupt with a typed controller", verbatim — the section the doc
+ * called "Handle an interrupt" before 2026-08-21. The controller is headless, so
+ * this panel renders nothing until the backend emits an AG-UI interrupt.
  * https://docs.copilotkit.ai/angular/mastra/guides/human-in-the-loop
+ *
+ * The doc now writes this call as `injectInterrupt<T>("default")`. The object
+ * form below is kept because it is the only one that compiles: `@copilotkit/
+ * angular@0.3.1` declares `injectInterrupt(options?: InjectInterruptOptions)`
+ * and no string overload. See the Known issue on the route page.
  */
 import { Component } from '@angular/core';
 import { injectInterrupt } from '@copilotkit/angular';

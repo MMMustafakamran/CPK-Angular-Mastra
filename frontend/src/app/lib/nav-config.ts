@@ -140,7 +140,7 @@ export const NAV: NavGroup[] = [
           'A decision tool that pauses the run until the user answers, plus a headless interrupt controller.',
         status: 'working',
         statusNote:
-          'The tool path is live. The interrupt panel is mounted but stays idle unless the agent emits an AG-UI interrupt.',
+          'The tool path is live. The interrupt panel is mounted but stays idle unless the agent emits an AG-UI interrupt. The guide’s newer store().interruptController section is not implemented: that member ships in no published @copilotkit/angular build — see Known issues.',
       },
       {
         path: '/shared-state',
