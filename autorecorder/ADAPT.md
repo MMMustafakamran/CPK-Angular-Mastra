@@ -148,6 +148,16 @@ mistaken for this one's.
 
 Delete handlers for pages that no longer exist. The doctor warns about orphans.
 
+**Notes written on screen are short and scruffy.** When a page records a finding
+rather than a working feature, `openNotepadWindow` + `typeInNotepad` put the
+reason on screen — in **three to five lowercase lines, no punctuation, no
+headings, no version block**, the way someone types when they want the point
+down before they forget it. The text is typed one character at a time on camera,
+so a long structured writeup takes a minute to appear and reads as documentation
+rather than as a note. Put the detail in the handler's header comment instead.
+`actions/shared-state.action.ts` is the reference; see README → *How a Notepad
+note is written*.
+
 ## Step 6 — Prove it
 
 ```bash

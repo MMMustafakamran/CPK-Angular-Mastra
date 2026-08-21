@@ -103,6 +103,35 @@ That Notepad overlay lives in `actions/notepad.ts`. Like `actions/page-ready.ts`
 it is framework-agnostic and belongs in `core/`; it sits in `actions/` only
 because `core/` is frozen.
 
+### How a Notepad note is written
+
+**Three to five lines, lowercase, no punctuation, no structure.** It is being
+typed by someone mid-recording who wants the point down before they forget it —
+not written up afterwards. No headings, no bullet hierarchy, no version block,
+no full sentences with commas and full stops. Skip the apostrophes.
+
+```
+panel says high the agent says it cant see anything
+both halves are on the wire though i checked
+context just sits in requestContext nothing puts it in the prompt
+state wants memory on the agent and theres none so it gets dropped
+guide doesnt mention either of them
+```
+
+The reason is that the note is typed on camera one character at a time. A
+thirty-line writeup takes most a minute to appear, buries the screen it is
+supposed to annotate, and reads like documentation — at which point the viewer
+stops watching the demo and starts reading. Five lines land in a few seconds and
+still say what broke and why.
+
+Detail that does not fit belongs in the handler's header comment and on the
+route page, where it can be read at leisure. Size the window to the note
+(`height: '250px'` for five lines); a short note in a tall window reads as an
+unfinished document.
+
+`actions/shared-state.action.ts` is the reference. The a2ui, voice, and threads
+notes predate this convention and are still long-form.
+
 ---
 
 ## Tracking recordings
