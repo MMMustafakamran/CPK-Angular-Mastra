@@ -47,7 +47,7 @@ node ci/automate.mjs --limit=3 --ignore-doc-drift
 | Flag | Effect |
 |---|---|
 | `--pull` | `git pull` first |
-| `--upgrade` | Upgrade deps instead of installing the lockfile |
+| `--upgrade` | `ncu -u --peer` the ranges, then install without the lockfile they invalidate |
 | `--skip-install` | Skip dependency installation |
 | `--ignore-doc-drift` / `--force` | Record even if the live docs moved |
 | `--allow-port-reuse` | Record against a server that is already running |
