@@ -44,7 +44,7 @@ on:
         type: boolean
         default: false
       fail_on_doc_drift:
-        description: 'Fail immediately if the live docs have drifted'
+        description: 'Fail immediately if the live docs have drifted (the nightly run always does)'
         required: false
         type: boolean
         default: false
@@ -182,7 +182,19 @@ jobs:
           if [ "${INPUT_USE_LOCKFILE:-false}" = "true" ]; then
             EXTRA_FLAGS="$EXTRA_FLAGS --use-lockfile"
           fi
-          if [ "${INPUT_FAIL_ON_DRIFT:-false}" != "true" ]; then
+          # The nightly run halts on doc drift, and is not asked. A recording is
+          # only useful as documentation of a page that still says what it said
+          # when the snapshot was taken; once the live doc moves, an unattended
+          # run would publish clips of a demo that no longer matches it, and
+          # nobody is watching to notice. Drift on a schedule is a signal to
+          # update doc-snapshot/, not something to record through.
+          #
+          # A manual run is attended, so there it stays opt-in: tick
+          # 'Fail immediately if the live docs have drifted' to get the same
+          # behaviour when you want it.
+          if [ "${GITHUB_EVENT_NAME:-}" = "schedule" ] || [ "${INPUT_FAIL_ON_DRIFT:-false}" = "true" ]; then
+            echo "Doc drift will halt this run."
+          else
             EXTRA_FLAGS="$EXTRA_FLAGS --ignore-doc-drift"
           fi
 

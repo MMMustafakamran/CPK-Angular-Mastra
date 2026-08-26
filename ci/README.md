@@ -90,6 +90,12 @@ FRONTEND_PORT=4300 node ci/automate.mjs                # what this pipeline chec
 
 1. **Doc drift** — compares each `doc-snapshot/pages/*.md` hash against the live
    page. Drift halts the run with exit code 2 unless `--ignore-doc-drift`.
+
+   The nightly run never passes that flag: unattended, drift means the clips
+   would document a page that has since changed, and nobody is watching to
+   catch it. Sync `doc-snapshot/` (`npm run drift:sync`) and the next night
+   records. A manual run is attended, so it ignores drift unless you tick
+   **Fail immediately if the live docs have drifted**.
 2. **Preflight** — loads `.env`, then refuses to continue if a port is already
    held or the model credential is missing/rejected. Both checks are cheap and
    both have cost a full run before.
