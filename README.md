@@ -99,7 +99,7 @@ Each route holds the notes, pass/fail criteria, and the exact source that runs.
 Routes with a live feature also expose `<route>/demo`, which is the same feature
 with no page chrome so it can be screen-recorded on its own.
 
-Docs last synced **2026-08-12**.
+Docs last synced **2026-08-26**.
 
 | Route | Status | Notes |
 | --- | --- | --- |
@@ -111,7 +111,7 @@ Docs last synced **2026-08-12**.
 | [/voice-multimodal](https://docs.copilotkit.ai/angular/mastra/guides/voice-multimodal) | Partial | Microphone records, but no transcription service is configured |
 | [/human-in-the-loop](https://docs.copilotkit.ai/angular/mastra/guides/human-in-the-loop) | Working | Tool path is live; interrupt panel idles until the agent suspends a tool. The guide's `store().interruptController` section is unimplemented — that API is in no published build |
 | [/shared-state](https://docs.copilotkit.ai/angular/mastra/guides/shared-state) | Working | |
-| [/threads](https://docs.copilotkit.ai/angular/mastra/guides/threads-memory-attachments-headless) | Partial · premium | Thread endpoints need an Enterprise Intelligence license |
+| [/threads](https://docs.copilotkit.ai/angular/mastra/guides/threads-memory-attachments-headless) | Partial · premium | Thread endpoints need a CopilotKit Intelligence license |
 | [/memory](https://docs.copilotkit.ai/angular/mastra/guides/threads-memory-attachments-headless) | Partial · premium | Runtime provides no memory routes, so `isAvailable()` is false |
 | [/attachments](https://docs.copilotkit.ai/angular/mastra/guides/threads-memory-attachments-headless) | Working | |
 | [/headless](https://docs.copilotkit.ai/angular/mastra/guides/threads-memory-attachments-headless) | Working | |
@@ -128,7 +128,7 @@ The nav, route headers, and this table all describe a page exactly once.
 
 **`SandboxFunction` variance.** `openGenerativeUI.sandboxFunctions` is typed
 `SandboxFunction[]`, i.e. `SandboxFunction<Record<string, unknown>>[]`, so the
-guide's `SandboxFunction<{ filter: string }>` is not assignable to it as
+`SandboxFunction<{ filter: string }>` is not assignable to it as
 written. `app.config.ts` casts at the array site — the same idiom the docs use
 for the equivalent `component` variance problem.
 
@@ -136,7 +136,7 @@ for the equivalent `component` variance problem.
 records, but no transcription service is configured on this runtime.
 
 **Premium routes render locked states.** Threads and memory endpoints come from
-the CopilotKit Enterprise Intelligence Platform. Without a license key the list
+the CopilotKit Intelligence Platform. Without a license key the list
 stays empty and the drawer renders its locked state — that is the expected
 result here, not a bug.
 

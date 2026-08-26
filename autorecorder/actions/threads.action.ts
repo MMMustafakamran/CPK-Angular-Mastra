@@ -4,7 +4,7 @@
  *
  * https://docs.copilotkit.ai/angular/mastra/guides/threads-memory-attachments-headless
  *
- * Thread endpoints come from the Enterprise Intelligence Platform. Without a
+ * Thread endpoints come from the CopilotKit Intelligence Platform. Without a
  * licence the hand-built `injectThreads` list never resolves and the drawer
  * renders its locked state — so a video of "threads not working" is worthless
  * unless it also says *why*. The Notepad note is opened before the demo, so the

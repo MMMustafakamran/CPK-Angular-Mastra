@@ -43,7 +43,7 @@ export interface RouteMeta {
   status: RouteStatus;
   /** Shown in the route header when the status is not plain "working". */
   statusNote?: string;
-  /** Feature requires a CopilotKit Enterprise Intelligence license. */
+  /** Feature requires a CopilotKit Intelligence license. */
   premium?: boolean;
   /**
    * This route owns a live interactive surface, which lives at `<path>/demo`
@@ -166,7 +166,7 @@ export const NAV: NavGroup[] = [
         status: 'partial',
         premium: true,
         statusNote:
-          'Thread endpoints come from the Enterprise Intelligence Platform. Unlicensed, the list stays empty and the drawer renders its locked state — which is the expected result here.',
+          'Thread endpoints come from the CopilotKit Intelligence Platform. Unlicensed, the list stays empty and the drawer renders its locked state — which is the expected result here.',
       },
       {
         path: '/memory',
