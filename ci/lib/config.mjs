@@ -50,7 +50,12 @@ export const FRONTEND_PORT = Number(process.env.FRONTEND_PORT || 4200);
  */
 export const RUNTIME_HEALTH_URL = `http://127.0.0.1:${RUNTIME_PORT}/api/copilotkit/info`;
 
-export const FRONTEND_URL = `http://127.0.0.1:${FRONTEND_PORT}`;
+// `localhost`, not 127.0.0.1, and not interchangeably. Angular 22 serves
+// through Vite, which binds the name `localhost` — on the CI runner that
+// resolves to ::1, so a poll at 127.0.0.1 is refused for the full timeout
+// while the dev server sits there having already printed its URL. The
+// recorder's frontendUrl uses the same name, so both reach the same server.
+export const FRONTEND_URL = `http://localhost:${FRONTEND_PORT}`;
 
 /**
  * Routes hit before recording starts.
