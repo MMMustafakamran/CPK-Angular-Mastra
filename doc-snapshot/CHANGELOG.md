@@ -8,6 +8,57 @@ Holds the 3 most recent dated entries. When a change lands on a fourth
 date, the oldest entry is dropped. Entries are counted, not aged, so a gap of
 weeks between changes does not expire anything.
 
+## 2026-08-26
+
+### 19:51 UTC — 3 pages, highest severity low
+
+**Low — Introduction**
+
+`/angular/mastra` · routes `/`, `/doc-sync` · under “Angular”
+
+8 prose lines changed.
+
+````diff
+- body="Add durable threads, inspection, and managed or self-hosted Enterprise Intelligence without changing the Angular frontend APIs in this guide."
++ body="Add durable threads, inspection, and managed or self-hosted CopilotKit Intelligence without changing the Angular frontend APIs in this guide."
+- - Angular 20, 21, or 22
++ - Angular 22
+- If you don't have one already, pin the CLI to one of the supported majors. This example uses Angular 22:
++ If you don't have one already, pin the CLI to the supported major:
+- - [Enterprise Intelligence](premium/overview): add durable threads, inspection, and cloud-hosted or self-hosted operations.
++ - [CopilotKit Intelligence](premium/overview): add durable threads, inspection, and cloud-hosted or self-hosted operations.
+````
+
+**Low — A2UI schemas, styling, and recovery**
+
+`/angular/mastra/guides/a2ui` · route `/a2ui` · under “Angular support boundaries”
+
+2 prose lines changed.
+
+````diff
+- - **Hashbrown is unsupported.** The stable Hashbrown Angular package does not support the complete Angular 20 through 22 policy.
++ - **Hashbrown is unsupported.** The stable Hashbrown Angular package does not support the Angular 22 policy.
+````
+
+**Low — Quickstart**
+
+`/angular/mastra/quickstart` · route `/quickstart` · under “Angular”
+
+8 prose lines changed.
+
+````diff
+- body="Add durable threads, inspection, and managed or self-hosted Enterprise Intelligence without changing the Angular frontend APIs in this guide."
++ body="Add durable threads, inspection, and managed or self-hosted CopilotKit Intelligence without changing the Angular frontend APIs in this guide."
+- - Angular 20, 21, or 22
++ - Angular 22
+- If you don't have one already, pin the CLI to one of the supported majors. This example uses Angular 22:
++ If you don't have one already, pin the CLI to the supported major:
+- - [Enterprise Intelligence](premium/overview): add durable threads, inspection, and cloud-hosted or self-hosted operations.
++ - [CopilotKit Intelligence](premium/overview): add durable threads, inspection, and cloud-hosted or self-hosted operations.
+````
+
+---
+
 ## 2026-08-21
 
 ### 10:36 UTC — 3 pages, highest severity high
@@ -62,6 +113,8 @@ weeks between changes does not expire anything.
 + 2. Send a chat message. Open **Agents**, then **AG-UI Events**. Events are moving.
 + 3. Open **Threads**. The list is unlocked (Intelligence is on), or locked with Enable Intelligence (Intelligence is off).
 ````
+
+---
 
 ---
 
