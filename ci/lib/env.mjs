@@ -69,3 +69,31 @@ export function loadEnvFiles() {
   }
   return loaded;
 }
+
+/**
+ * Trim the credentials the job inherited.
+ *
+ * Values from `.env` are trimmed as they are parsed; values injected by CI are
+ * not, and a GitHub secret pasted with a trailing newline keeps it. That is not
+ * a cosmetic difference. Node's fetch normalises header values, so the
+ * credential preflight passed and the runtime worked — while Python's httpx
+ * refused the same key with `Illegal header value`, which the OpenAI SDK
+ * reports as the far less helpful "Connection error". The agent looked
+ * unreachable when the key simply had a newline on the end.
+ *
+ * Trimming here fixes the run and leaves the secret worth fixing at the source;
+ * the names printed say which ones to re-paste.
+ */
+export function trimInheritedCredentials() {
+  const trimmed = [];
+  for (const [key, value] of Object.entries(process.env)) {
+    if (typeof value !== 'string') continue;
+    if (!/_(API_KEY|ENDPOINT|MODEL_ID|TOKEN|URL)$/.test(key)) continue;
+    const clean = value.trim();
+    if (clean !== value) {
+      process.env[key] = clean;
+      trimmed.push(key);
+    }
+  }
+  return trimmed;
+}

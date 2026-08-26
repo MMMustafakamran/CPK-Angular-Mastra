@@ -37,7 +37,7 @@ import {
   RUNTIME_HEALTH_URL,
   isWindows,
 } from './lib/config.mjs';
-import { loadEnvFiles } from './lib/env.mjs';
+import { loadEnvFiles, trimInheritedCredentials } from './lib/env.mjs';
 import {
   assertModelCredentials,
   assertPortsFree,
@@ -275,6 +275,13 @@ async function main() {
     const envFiles = loadEnvFiles();
     if (envFiles.length > 0) {
       console.log(`🔑 [Preflight] Loaded environment from: ${envFiles.join(', ')}`);
+    }
+    const trimmedVars = trimInheritedCredentials();
+    if (trimmedVars.length > 0) {
+      console.log(
+        `🔑 [Preflight] Trimmed surrounding whitespace from: ${trimmedVars.join(', ')}` +
+          ' — worth fixing at the source, a stored secret is keeping a stray newline.',
+      );
     }
     // `busy` records which ports were already served. With --allow-port-reuse
     // those servers are reused as-is; starting a second one on the same port is
