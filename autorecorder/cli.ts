@@ -66,13 +66,30 @@ const GLOBAL_FLAGS = new Set([
   '--doctor',
   '--verify-config',
   '--online',
+  // Selection modifiers, not page queries. Without them here they fall through
+  // to the substring filter below and match zero pages.
+  '--limit',
+  '--first',
+  '--count',
+  '--shard',
 ]);
 
 async function main(): Promise<void> {
   const rawArgs = process.argv.slice(2);
   // Selection args only; `--force` etc. would otherwise fall through to the
   // substring filter below and match zero pages.
-  const args = rawArgs.filter((a) => !GLOBAL_FLAGS.has(a));
+  const args = rawArgs.filter((a) => {
+    if (GLOBAL_FLAGS.has(a)) return false;
+    if (
+      a.startsWith('--limit=') ||
+      a.startsWith('--first=') ||
+      a.startsWith('--count=') ||
+      a.startsWith('--shard=')
+    ) {
+      return false;
+    }
+    return true;
+  });
   const isListMode =
     rawArgs.includes('--list') ||
     rawArgs.includes('-l') ||
@@ -147,8 +164,19 @@ async function main(): Promise<void> {
     }
   }
 
+  // `--pages=a,b,c` — how CI names an exact set. The single-page forms above
+  // stay for typing by hand.
+  const multiPagesArg = rawArgs.find((a) => a.startsWith('--pages=') || a.startsWith('--only='));
   let targetPages = PAGES;
-  if (pageArg) {
+
+  if (multiPagesArg) {
+    const ids = multiPagesArg
+      .split('=')[1]
+      .split(',')
+      .map((s) => s.trim().toLowerCase())
+      .filter(Boolean);
+    targetPages = PAGES.filter((p) => ids.includes(p.id.toLowerCase()));
+  } else if (pageArg) {
     targetPages = PAGES.filter(
       (p) => p.id.toLowerCase() === pageArg!.toLowerCase(),
     );
@@ -164,7 +192,60 @@ async function main(): Promise<void> {
     );
   }
 
+  // --limit=N / --first=N / --count=N — record only the first N of whatever the
+  // selection above produced.
+  let limitArg: number | undefined;
+  const limitMatch = rawArgs.find(
+    (a) => a.startsWith('--limit=') || a.startsWith('--first=') || a.startsWith('--count='),
+  );
+  if (limitMatch) {
+    const num = parseInt(limitMatch.split('=')[1], 10);
+    if (!isNaN(num) && num > 0) limitArg = num;
+  } else {
+    const limitIndex = rawArgs.findIndex(
+      (a) => a === '--limit' || a === '--first' || a === '--count',
+    );
+    if (limitIndex !== -1 && rawArgs[limitIndex + 1]) {
+      const num = parseInt(rawArgs[limitIndex + 1], 10);
+      if (!isNaN(num) && num > 0) limitArg = num;
+    }
+  }
+
+  if (limitArg && limitArg > 0) {
+    targetPages = targetPages.slice(0, limitArg);
+  }
+
+  // --shard=K/N — the CI matrix splits the selection across workers. Slicing a
+  // contiguous chunk (rather than striping) keeps a shard's videos in page
+  // order, which is the order the doc reads in.
+  const shardMatch = rawArgs.find((a) => a.startsWith('--shard='));
+  if (shardMatch) {
+    const val = shardMatch.split('=')[1] || '';
+    const parts = val.split('/');
+    if (parts.length === 2) {
+      const curr = parseInt(parts[0], 10);
+      const total = parseInt(parts[1], 10);
+      if (!isNaN(curr) && !isNaN(total) && total > 0 && curr > 0 && curr <= total) {
+        const chunkSize = Math.ceil(targetPages.length / total);
+        const start = (curr - 1) * chunkSize;
+        const end = Math.min(start + chunkSize, targetPages.length);
+        targetPages = targetPages.slice(start, end);
+        console.log(
+          `\n🧩 [Matrix Sharding]: Worker Shard ${curr}/${total} -> Recording ${targetPages.length} pages (index ${start + 1} to ${end})`,
+        );
+      }
+    }
+  }
+
   if (targetPages.length === 0) {
+    // A shard with nothing to do is normal when there are fewer pages than
+    // workers; failing it would fail the matrix for no reason.
+    if (shardMatch) {
+      console.log(
+        `\nℹ️ [Matrix Sharding]: No pages assigned to this worker shard. Exiting cleanly.`,
+      );
+      process.exit(0);
+    }
     console.error(`❌ No matching page found for query: ${args.join(' ')}`);
     console.log(`Available page IDs: ${PAGES.map((p) => p.id).join(', ')}`);
     console.log(`Tip: run \`npm run record -- --list\` to view all routes.`);

@@ -205,6 +205,23 @@ Commit `doc-snapshot/` — `pages/`, `manifest.json` and `CHANGELOG.md` are the 
 Lives in [`autorecorder/`](autorecorder/) — a portable Playwright suite shared across CopilotKit framework repos and adapted to this one through `config/` and `actions/` only.
 See [`autorecorder/README.md`](autorecorder/README.md) for the full contract.
 
+### One command, from a cold repo
+
+[`ci/`](ci/README.md) drives the whole thing — doc-drift check, preflight,
+dependency install, both servers, recording and report — from a single Node
+process, and is what the nightly GitHub Actions workflow runs:
+
+```bash
+npm run automate                              # everything, all pages
+npm run automate -- --pages=quickstart,threads
+npm run automate -- --limit=3 --ignore-doc-drift
+```
+
+It starts the servers itself. The commands below are the by-hand route, against
+servers you started yourself.
+
+### By hand
+
 Once the runtime (`:8200`) and frontend dev server (`:4200`) are running:
 
 ```bash
