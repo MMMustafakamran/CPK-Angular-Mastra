@@ -60,18 +60,33 @@ const OWN_FLAGS = [
 /**
  * How the frontend, agent and recorder are installed.
  *
- * `--legacy-peer-deps` is not a workaround bolted on here: it is how both
- * READMEs document installing this repo, and therefore the only resolution its
- * committed dependency set has ever been checked against. A plain `npm install`
- * is stricter than any install this project has actually had, so CI fails on
- * peer conflicts no local run has ever hit — which is what happened on the
- * first clean run.
+ * A plain `npm install`, deliberately: every install target in this repo
+ * resolves under npm's real peer rules, so `--legacy-peer-deps` would only hide
+ * the next genuine conflict instead of failing on it.
  *
- * It hides real conflicts, so it is not a licence to ignore them: a peer error
- * that still appears here means a pin is wrong, and belongs fixed in the
- * package.json rather than silenced twice.
+ * `--upgrade` is the one case that needs help. `ncu -u --peer` rewrites the
+ * `@angular/*` ranges in package.json but leaves package-lock.json pinned to the
+ * versions it replaced, and Angular's packages peer-depend on one another at
+ * exact versions. npm is then asked to satisfy `@angular/common@^22.1.3` against
+ * a lock still holding `@angular/forms@22.1.1`, which requires `common@22.1.1`
+ * and nothing else. That is unsatisfiable, and it is precisely what failed CI.
+ *
+ * So an upgrade run drops the lockfile it just invalidated. Resolving the
+ * upgraded ranges as a set is the only coherent thing "upgrade" can mean; a
+ * normal run still installs the committed lock untouched.
  */
-const NPM_INSTALL = 'npm install --legacy-peer-deps';
+const NPM_INSTALL = 'npm install';
+
+function installNodeDeps(dir, description) {
+  if (shouldUpgrade) {
+    const lockPath = path.join(dir, 'package-lock.json');
+    if (fs.existsSync(lockPath)) {
+      fs.rmSync(lockPath);
+      console.log(`   ↻ ${description}: dropped package-lock.json, stale after the upgrade`);
+    }
+  }
+  runSync(NPM_INSTALL, dir, description);
+}
 
 const args = process.argv.slice(2);
 const shouldPull = args.includes('--pull');
@@ -272,7 +287,7 @@ async function main() {
       // The agent is installed, never started: frontend/server.ts imports
       // backend/src/mastra directly, so its node_modules must exist even though
       // `mastra dev` is never run.
-      runSync(NPM_INSTALL, BACKEND_DIR, 'Installing Agent Dependencies');
+      installNodeDeps(BACKEND_DIR, 'Installing Agent Dependencies');
 
       if (shouldUpgrade) {
         runSync(
@@ -282,8 +297,8 @@ async function main() {
         );
       }
 
-      runSync(NPM_INSTALL, FRONTEND_DIR, 'Installing Frontend Dependencies');
-      runSync(NPM_INSTALL, RECORDER_DIR, 'Installing Autorecorder Dependencies');
+      installNodeDeps(FRONTEND_DIR, 'Installing Frontend Dependencies');
+      installNodeDeps(RECORDER_DIR, 'Installing Autorecorder Dependencies');
     }
 
     // 4. Server — skipped when the ports are already being served.
