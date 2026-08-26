@@ -133,6 +133,20 @@ jobs:
             backend/package-lock.json
             autorecorder/package-lock.json
 
+      # The runner's Node 22 ships npm 10, but these frontends pin npm 12 in
+      # `packageManager`. That gap is not cosmetic: npm 10 cannot resolve the
+      # `"rxjs": "$rxjs"` reference in the frontend's `overrides`, so a
+      # lockfile-free install — which is what an --upgrade run performs — dies
+      # on `Unable to resolve reference $rxjs`. Read the pin rather than
+      # restating it, so bumping package.json cannot leave CI behind again.
+      - name: Use the npm version the frontend pins
+        run: |
+          set -euo pipefail
+          PINNED="$(node -p "require('./frontend/package.json').packageManager")"
+          echo "Runner has npm $(npm --version); frontend pins $PINNED"
+          npm install -g "$PINNED"
+          npm --version
+
       - name: Install Playwright & System Chromium Dependencies
         run: |
           cd autorecorder
