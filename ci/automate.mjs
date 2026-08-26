@@ -14,7 +14,7 @@
  *
  * Flags:
  *   --pull               git pull before running
- *   --upgrade            upgrade dependencies rather than installing the lockfile
+ *   --use-lockfile       install the committed lockfiles instead of re-resolving
  *   --skip-install       skip dependency installation entirely
  *   --ignore-doc-drift   record even if the live docs have moved (alias: --force)
  *   --allow-port-reuse   record against servers that are already running
@@ -49,7 +49,7 @@ import { generateReport } from './lib/report.mjs';
 
 const OWN_FLAGS = [
   '--pull',
-  '--upgrade',
+  '--use-lockfile',
   '--skip-install',
   '--ignore-doc-drift',
   '--force',
@@ -64,25 +64,32 @@ const OWN_FLAGS = [
  * resolves under npm's real peer rules, so `--legacy-peer-deps` would only hide
  * the next genuine conflict instead of failing on it.
  *
- * `--upgrade` is the one case that needs help. `ncu -u --peer` rewrites the
- * `@angular/*` ranges in package.json but leaves package-lock.json pinned to the
- * versions it replaced, and Angular's packages peer-depend on one another at
- * exact versions. npm is then asked to satisfy `@angular/common@^22.1.3` against
- * a lock still holding `@angular/forms@22.1.1`, which requires `common@22.1.1`
- * and nothing else. That is unsatisfiable, and it is precisely what failed CI.
+ * By default the lockfile is dropped first, so npm resolves the newest versions
+ * the ranges in package.json already allow. That is the point of these
+ * recordings: they document CopilotKit, so they should be made against the
+ * CopilotKit that shipped, not one pinned months ago. It is also exactly what
+ * `rm -rf node_modules package-lock.json && npm install` does by hand, which is
+ * how these demos have always been checked. Nothing needs deleting alongside
+ * it — CI starts on a clean runner, so the lockfile is the only thing pinning
+ * anything, and a caret range still cannot cross a major boundary.
  *
- * So an upgrade run drops the lockfile it just invalidated. Resolving the
- * upgraded ranges as a set is the only coherent thing "upgrade" can mean; a
- * normal run still installs the committed lock untouched.
+ * `--use-lockfile` opts back into the committed versions, for reproducing an
+ * older run or bisecting a break to the dependency tree rather than the demo.
+ *
+ * What no run does is rewrite the ranges. `ncu -u --peer` used to run here and
+ * caused most of this pipeline's failures: it bumped all twelve @angular/*
+ * packages past a lockfile that still pinned the old ones, and Angular's exact
+ * inter-package peers made that unsatisfiable. Bumping the manifest is a
+ * reviewed change to package.json, not something a nightly run does to itself.
  */
 const NPM_INSTALL = 'npm install';
 
 function installNodeDeps(dir, description) {
-  if (shouldUpgrade) {
+  if (shouldRefresh) {
     const lockPath = path.join(dir, 'package-lock.json');
     if (fs.existsSync(lockPath)) {
       fs.rmSync(lockPath);
-      console.log(`   ↻ ${description}: dropped package-lock.json, stale after the upgrade`);
+      console.log(`   ↻ ${description}: dropped package-lock.json to resolve the ranges afresh (--use-lockfile keeps it)`);
     }
   }
   runSync(NPM_INSTALL, dir, description);
@@ -90,7 +97,7 @@ function installNodeDeps(dir, description) {
 
 const args = process.argv.slice(2);
 const shouldPull = args.includes('--pull');
-const shouldUpgrade = args.includes('--upgrade');
+const shouldRefresh = !args.includes('--use-lockfile');
 const skipInstall = args.includes('--skip-install');
 const ignoreDocDrift = args.includes('--ignore-doc-drift') || args.includes('--force');
 const allowPortReuse = args.includes('--allow-port-reuse');
@@ -230,7 +237,7 @@ async function main() {
     health: {},
     error: null,
     args: forwardArgs,
-    upgraded: shouldUpgrade,
+    refreshed: shouldRefresh,
   };
 
   try {
@@ -288,14 +295,6 @@ async function main() {
       // backend/src/mastra directly, so its node_modules must exist even though
       // `mastra dev` is never run.
       installNodeDeps(BACKEND_DIR, 'Installing Agent Dependencies');
-
-      if (shouldUpgrade) {
-        runSync(
-          'npx npm-check-updates -u --peer',
-          FRONTEND_DIR,
-          'Upgrading frontend dependencies (ncu -u --peer)',
-        );
-      }
 
       installNodeDeps(FRONTEND_DIR, 'Installing Frontend Dependencies');
       installNodeDeps(RECORDER_DIR, 'Installing Autorecorder Dependencies');

@@ -67,7 +67,7 @@ export function generateReport(data) {
     timestamp: new Date().toISOString(),
     status: data.success ? 'SUCCESS' : 'FAILED',
     args: data.args?.length > 0 ? data.args.join(' ') : 'all',
-    upgradedPackages: Boolean(data.upgraded),
+    refreshedDeps: Boolean(data.refreshed),
     docDrift: {
       checkedPages: data.driftResult?.total || 0,
       driftDetected: data.driftResult?.drifted || false,
@@ -90,7 +90,7 @@ export function generateReport(data) {
   lines.push(`- **Status:** ${report.status === 'SUCCESS' ? '✅ **SUCCESS**' : '❌ **FAILED**'}`);
   lines.push(`- **Generated At:** \`${report.timestamp}\``);
   lines.push(`- **Execution Mode:** \`${report.args}\``);
-  lines.push(`- **Upgraded Packages:** \`${report.upgradedPackages ? 'Yes (--upgrade)' : 'No'}\`\n`);
+  lines.push(`- **Dependencies:** \`${report.refreshedDeps ? 'Re-resolved (--refresh)' : 'From lockfile'}\`\n`);
 
   lines.push('## 1. 🔍 Doc Drift Check');
   if (report.docDrift.driftDetected) {

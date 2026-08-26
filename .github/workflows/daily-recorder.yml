@@ -38,8 +38,8 @@ on:
         required: false
         type: string
         default: ''
-      upgrade_packages:
-        description: 'Upgrade dependencies (ncu -u --peer)'
+      use_lockfile:
+        description: 'Install the committed lockfiles instead of re-resolving. Off by default: a normal run picks up the newest versions package.json already allows.'
         required: false
         type: boolean
         default: false
@@ -136,7 +136,7 @@ jobs:
       # The runner's Node 22 ships npm 10, but these frontends pin npm 12 in
       # `packageManager`. That gap is not cosmetic: npm 10 cannot resolve the
       # `"rxjs": "$rxjs"` reference in the frontend's `overrides`, so a
-      # lockfile-free install — which is what an --upgrade run performs — dies
+      # lockfile-free install — which is what a normal run performs — dies
       # on `Unable to resolve reference $rxjs`. Read the pin rather than
       # restating it, so bumping package.json cannot leave CI behind again.
       - name: Use the npm version the frontend pins
@@ -164,7 +164,7 @@ jobs:
         env:
           SELECTED_PAGES: ${{ needs.prepare.outputs.pages }}
           INPUT_CUSTOM_ARGS: ${{ inputs.custom_args }}
-          INPUT_UPGRADE: ${{ inputs.upgrade_packages }}
+          INPUT_USE_LOCKFILE: ${{ inputs.use_lockfile }}
           INPUT_FAIL_ON_DRIFT: ${{ inputs.fail_on_doc_drift }}
           SHARD: ${{ matrix.shard }}
         run: |
@@ -179,8 +179,8 @@ jobs:
           fi
 
           EXTRA_FLAGS=""
-          if [ "${INPUT_UPGRADE:-false}" = "true" ]; then
-            EXTRA_FLAGS="$EXTRA_FLAGS --upgrade"
+          if [ "${INPUT_USE_LOCKFILE:-false}" = "true" ]; then
+            EXTRA_FLAGS="$EXTRA_FLAGS --use-lockfile"
           fi
           if [ "${INPUT_FAIL_ON_DRIFT:-false}" != "true" ]; then
             EXTRA_FLAGS="$EXTRA_FLAGS --ignore-doc-drift"

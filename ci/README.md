@@ -29,7 +29,7 @@ ci/
 |---|---|
 | `npm run automate` | Full pipeline: drift → preflight → deps → servers → record |
 | `npm run automate:pull` | Same, after `git pull` |
-| `npm run automate:upgrade` | Same, upgrading dependencies first |
+| `npm run automate:locked` | Same, but installing the committed lockfiles |
 | `npm run drift` | Doc drift check on its own |
 | `npm run drift:sync` | Update `doc-snapshot/` to match live docs |
 | `npm run ci:pages` | List valid page ids |
@@ -47,7 +47,7 @@ node ci/automate.mjs --limit=3 --ignore-doc-drift
 | Flag | Effect |
 |---|---|
 | `--pull` | `git pull` first |
-| `--upgrade` | `ncu -u --peer` the ranges, then install without the lockfile they invalidate |
+| `--use-lockfile` | Install the committed lockfiles instead of re-resolving (see below) |
 | `--skip-install` | Skip dependency installation |
 | `--ignore-doc-drift` / `--force` | Record even if the live docs moved |
 | `--allow-port-reuse` | Record against a server that is already running |
@@ -96,6 +96,8 @@ FRONTEND_PORT=4300 node ci/automate.mjs                # what this pipeline chec
 3. **Dependencies** — `npm install` for the agent, the frontend and the
    recorder. The agent is installed and never started: `frontend/server.ts`
    imports it, so its `node_modules` has to exist.
+   By default the lockfiles are dropped first, so the newest versions the
+   ranges already allow get installed — see *Which versions get recorded*.
 4. **Servers** — `npm run dev`, spawned from this process, logging to
    `autorecorder/videos/logs/`.
 5. **Health + warmup** — poll the runtime, then the app; then fetch the heaviest
@@ -149,6 +151,30 @@ manual run before a job starts.
 
 The section map lives in `PAGE_GROUPS` in `lib/pages.mjs`, and a run fails if any
 page belongs to no section, so nothing can quietly become unreachable.
+
+## Which versions get recorded
+
+A run re-resolves its dependencies by default: the lockfiles are dropped and
+`npm install` / `uv sync --upgrade` pick the newest versions the ranges in
+`package.json` and `pyproject.toml` already allow. `@copilotkit/*` is a caret
+range, so a release recorded the night it ships, and a major version still
+cannot arrive without someone editing the manifest.
+
+This is the same thing as deleting `node_modules` and `package-lock.json` by
+hand, which is how these demos have always been checked before a release. On CI
+there is nothing to delete beside the lockfile: every run starts on a clean
+runner.
+
+`--use-lockfile` (dispatch checkbox **Install the committed lockfiles**) opts
+back into the committed versions. Reach for it to reproduce an older run, or to
+find out whether a break came from the demo or from the tree beneath it.
+
+What no run does is rewrite the ranges. `ncu -u --peer` used to run here and was
+the largest single source of CI failures: it bumped all twelve `@angular/*`
+packages past a lockfile that still pinned the old ones, and Angular's exact
+inter-package peer requirements made the result unsatisfiable. Raising a range
+is a reviewed edit to `package.json`, not something a nightly recording run
+should do to itself.
 
 ## Adding a page
 
