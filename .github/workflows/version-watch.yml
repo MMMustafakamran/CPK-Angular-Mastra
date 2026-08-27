@@ -79,13 +79,17 @@ jobs:
         if: github.event_name == 'schedule' || inputs.commit_snapshot
         run: |
           set -euo pipefail
-          if git diff --quiet -- ci/resolved-versions.json; then
+          # Stage BEFORE asking whether anything moved. `git diff` ignores
+          # untracked files, so on the very first run — the one establishing the
+          # baseline — it reports no change and the snapshot is thrown away.
+          # Staging first makes the new file visible to the check.
+          git add -- ci/resolved-versions.json
+          if git diff --cached --quiet -- ci/resolved-versions.json; then
             echo "No version movement to record."
             exit 0
           fi
           git config user.name  'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
-          git add -- ci/resolved-versions.json
           git commit -m 'chore(ci): record resolved dependency versions'
 
           # A protected default branch rejects this push. That is a repo-settings
