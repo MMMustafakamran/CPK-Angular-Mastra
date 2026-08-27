@@ -248,35 +248,55 @@ Recordings are saved to `autorecorder/videos/`. That folder is gitignored as bui
 
 ## Upgrading Packages
 
-### Frontend
+### Check first
 
 ```bash
-cd frontend
-# Check and update dependencies in package.json to latest versions
-npx npm-check-updates -u
-# Ensure TypeScript remains compatible with Angular 22 (pinned to ~6.0.2)
-npm install --save-dev typescript@~6.0.2
-# Install updated dependencies (use --legacy-peer-deps if peer resolution conflicts arise)
-npm install --legacy-peer-deps
+node ci/check-versions.mjs
 ```
 
-### Backend
+Read-only. It sorts what is outdated into the only three things it can be, and
+just one of them is actionable here:
+
+| Cause | Do |
+|---|---|
+| Our range is behind | Bump it — the steps below |
+| An upstream package **exact-pins** an older version | Nothing. Report it upstream |
+| A **peerDependency** forbids the newer one | Nothing. Bumping breaks the build |
+
+`@copilotkit/angular` exact-pins `@copilotkit/core`, and Angular 22 requires
+`typescript >=6.0 <6.1` — so TypeScript reads a full major behind and must stay
+there. The nightly publishes this report on its own; see
+[`ci/VERSION-WATCH.md`](ci/VERSION-WATCH.md).
+
+### Then bump, on a branch
+
+Each of the three workspaces is npm, and the ritual is the same for all of them
+— `frontend`, `backend`, `autorecorder`:
 
 ```bash
-cd backend
-# Check and update dependencies in package.json to latest versions
-npx npm-check-updates -u
-# Install updated dependencies (use --legacy-peer-deps if peer resolution conflicts arise)
-npm install --legacy-peer-deps
+git checkout -b chore/bump-<package>
+npm --prefix <workspace> install <package>@<version>
+git diff <workspace>/package-lock.json   # one bump can drag in dozens of transitives
+npm --prefix frontend run build
 ```
 
-### Autorecorder
+Then record the affected pages before merging — verifying the docs still run is
+what this repo is for. Revert with
+`git checkout <workspace>/package-lock.json && npm ci`.
 
-```bash
-cd autorecorder
-# Check and update dependencies in package.json to latest versions
-npx npm-check-updates -u
-# Install updated dependencies
-npm install
-```
+`frontend` and `backend` both resolve `@mastra/core`, and the runtime loads the
+agent in-process, so bump them together or check that the version watch's
+**Frontend / backend agreement** section still passes.
+
+Two things not to do:
+
+- **`npx npm-check-updates -u`** rewrites `package.json` to the newest release of
+  everything, ignoring the ranges. It is the largest single source of CI failures
+  in repos shaped like this one — it bumps all twelve `@angular/*` packages past
+  Angular's exact inter-package peer requirements, leaving the tree
+  unsatisfiable. Never schedule it. Dependabot is the safe alternative if
+  PR-based automation is wanted.
+- **`npm install --legacy-peer-deps`** does not fix a peer conflict, it hides
+  one. The error it silences is the signal that the combination being installed
+  was never meant to work together — precisely what this harness reports on.
 

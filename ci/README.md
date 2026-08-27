@@ -10,6 +10,7 @@ GitHub requires that path.
 ci/
 ├── automate.mjs          entry point — one process, start to finish
 ├── check-doc-drift.mjs   compares doc-snapshot/ against the live docs
+├── check-versions.mjs    dependency drift report + resolved-version snapshot
 ├── list-pages.mjs        prints the recorder's page ids
 ├── validate-pages.mjs    rejects unknown ids before a run starts
 ├── resolve-selection.mjs expands dispatch checkboxes + ids into a page list
@@ -161,10 +162,11 @@ page belongs to no section, so nothing can quietly become unreachable.
 ## Which versions get recorded
 
 A run re-resolves its dependencies by default: the lockfiles are dropped and
-`npm install` / `uv sync --upgrade` pick the newest versions the ranges in
-`package.json` and `pyproject.toml` already allow. `@copilotkit/*` is a caret
-range, so a release recorded the night it ships, and a major version still
-cannot arrive without someone editing the manifest.
+`npm install` picks the newest versions the ranges in `package.json` already
+allow. All three workspaces are npm here — `backend/`, `frontend/` and
+`autorecorder/` — so all three move. `@copilotkit/*` is a caret range, so a
+release is recorded the night it ships, and a major version still cannot arrive
+without someone editing the manifest.
 
 This is the same thing as deleting `node_modules` and `package-lock.json` by
 hand, which is how these demos have always been checked before a release. On CI
@@ -182,6 +184,51 @@ inter-package peer requirements made the result unsatisfiable. Raising a range
 is a reviewed edit to `package.json`, not something a nightly recording run
 should do to itself.
 
+## Version watch
+
+Re-resolving means the versions under test move on their own — silently. A
+broken recording could be this repo's code or a dependency bump, and nothing in
+a recording run says which. `check-versions.mjs` supplies the missing record,
+and runs on its own schedule:
+
+```
+05:30 UTC  version-watch.yml   re-resolve -> report -> commit the snapshot
+06:00 UTC  daily-recorder.yml  re-resolve -> record the demos
+```
+
+The two are **independent**. The recorder does not wait for the watch, and a
+moved version never blocks a recording: drift is news, not a build failure.
+They are separate workflows for two more reasons — asking "what moved?" should
+not cost three sharded workers and a run of model calls, and the watch needs
+`contents: write` to commit its snapshot, which is worth keeping out of the
+workflow that holds the model keys.
+
+Each re-resolves independently, so a package published inside that 30-minute gap
+could reach the recorder without appearing in the snapshot. Rare, and the cost
+of merging them back is coupling plus write access beside the secrets.
+
+What the report contains:
+
+| Section | Answers |
+|---|---|
+| What moved since the last run | Diff against `ci/resolved-versions.json` — the overnight suspects |
+| Frontend / Backend | `npm outdated`, **classified**: ours to bump / upstream pin / peer-blocked |
+| Upstream pins | What the newest `@copilotkit/angular`, `/runtime` and `@ag-ui/mastra` force on consumers |
+| Protocol fragmentation | Multiple copies of `@ag-ui/*` or `@copilotkit/core` in one tree |
+| Frontend / backend agreement | `@mastra/core` and `zod` compared across the two lockfiles |
+
+Classification matters because only one of the three causes is actionable here:
+`@copilotkit/angular` exact-pins `@copilotkit/core`, and Angular's
+`peerDependencies` forbid a newer TypeScript. Treating `npm outdated`'s
+`Latest` column as a to-do list breaks the build. `ci/VERSION-WATCH.md` carries
+the reasoning, the current findings, and the manual upgrade ritual.
+
+The snapshot is committed rather than uploaded, so
+`git log -p ci/resolved-versions.json` is the timeline. Scheduled runs always
+commit; a manual run only does so if you tick **Commit the resolved-version
+snapshot**. If the push is rejected — a protected default branch — the job says
+so in its summary and stays green.
+
 ## Adding a page
 
 1. Add it to `autorecorder/config/pages.config.ts`.
@@ -197,9 +244,13 @@ third of the pages under `xvfb-run`, then `consolidate-recordings` merges the
 artifacts.
 
 ```
+daily-recorder.yml
             ┌─ Worker 1/3 ─┐
 prepare ────┼─ Worker 2/3 ─┼─→ consolidate-recordings
             └─ Worker 3/3 ─┘
+
+version-watch.yml
+version-watch          (separate workflow, no dependency either way)
 ```
 
 ## Artifact names
