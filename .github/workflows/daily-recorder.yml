@@ -323,9 +323,15 @@ jobs:
           npm install -g "$PINNED"
           npm --version
 
-      # Resolve exactly the way a recording run does -- ci/automate.mjs drops the
-      # lockfiles by default -- so this describes the versions the demos are
-      # actually recorded against, not the ones committed months ago.
+      # Resolve the way a recording run does -- ci/automate.mjs drops the
+      # lockfiles by default -- so this describes the range boundaries as they
+      # stand this morning, not versions committed months ago.
+      #
+      # It is NOT authoritative for what the demos ran on. This is a separate
+      # job on a separate runner doing its own install, minutes earlier; if a
+      # release lands in that window the two legitimately disagree. The
+      # recorded truth comes from RUN_REPORT, which reads the installed tree
+      # inside the shard that did the recording.
       #
       # The Python side is NOT re-resolved here: the recorder runs
       # `uv sync --upgrade`, and doing that here would mean committing a relock

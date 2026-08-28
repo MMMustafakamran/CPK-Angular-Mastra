@@ -14,17 +14,46 @@ import {
   VIDEOS_DIR,
 } from './config.mjs';
 
+/**
+ * What actually ran -- not what package.json asks for.
+ *
+ * ci/automate.mjs drops the lockfile by default, so a run deliberately tests
+ * the newest versions the declared ranges allow. Reading `pkg.dependencies`
+ * therefore reported the FLOOR of a range rather than the version under test:
+ * a run against @copilotkit/react-core 1.69.3 reported "^1.69.2". That made
+ * the report misleading about the one thing the run exists to discover, and
+ * the disagreement only surfaced when a separate resolved-version report was
+ * put next to it.
+ *
+ * Read the installed tree instead, and keep the declared range alongside when
+ * the two differ, so a range bump is still visible.
+ */
+function resolveVersion(dir, pkg, name) {
+  const declared = pkg.dependencies?.[name] ?? pkg.devDependencies?.[name];
+  let installed;
+  try {
+    const manifest = path.join(dir, 'node_modules', ...name.split('/'), 'package.json');
+    installed = JSON.parse(fs.readFileSync(manifest, 'utf8')).version;
+  } catch {
+    // Not installed: a report written before install, or after a failed one.
+  }
+  if (!declared && !installed) return 'n/a';
+  if (!installed) return `${declared} (not installed)`;
+  if (!declared) return installed;
+  return declared === installed ? installed : `${installed} (declared ${declared})`;
+}
+
 function getPackageVersions() {
   const versions = { frontend: {}, backend: {} };
   try {
     const pkg = JSON.parse(fs.readFileSync(path.join(FRONTEND_DIR, 'package.json'), 'utf8'));
     versions.frontend = {
-      '@copilotkit/angular': pkg.dependencies?.['@copilotkit/angular'] || 'n/a',
-      '@copilotkit/runtime': pkg.dependencies?.['@copilotkit/runtime'] || 'n/a',
-      '@ag-ui/mastra': pkg.dependencies?.['@ag-ui/mastra'] || 'n/a',
-      '@mastra/core': pkg.dependencies?.['@mastra/core'] || 'n/a',
-      '@angular/core': pkg.dependencies?.['@angular/core'] || 'n/a',
-      '@angular/ssr': pkg.dependencies?.['@angular/ssr'] || 'n/a',
+      '@copilotkit/angular': resolveVersion(FRONTEND_DIR, pkg, '@copilotkit/angular'),
+      '@copilotkit/runtime': resolveVersion(FRONTEND_DIR, pkg, '@copilotkit/runtime'),
+      '@ag-ui/mastra': resolveVersion(FRONTEND_DIR, pkg, '@ag-ui/mastra'),
+      '@mastra/core': resolveVersion(FRONTEND_DIR, pkg, '@mastra/core'),
+      '@angular/core': resolveVersion(FRONTEND_DIR, pkg, '@angular/core'),
+      '@angular/ssr': resolveVersion(FRONTEND_DIR, pkg, '@angular/ssr'),
     };
   } catch {
     // ignore
@@ -34,10 +63,10 @@ function getPackageVersions() {
   try {
     const pkg = JSON.parse(fs.readFileSync(path.join(BACKEND_DIR, 'package.json'), 'utf8'));
     versions.backend = {
-      '@mastra/core': pkg.dependencies?.['@mastra/core'] || 'n/a',
-      '@mastra/memory': pkg.dependencies?.['@mastra/memory'] || 'n/a',
-      '@ai-sdk/openai': pkg.dependencies?.['@ai-sdk/openai'] || 'n/a',
-      mastra: pkg.devDependencies?.['mastra'] || 'n/a',
+      '@mastra/core': resolveVersion(BACKEND_DIR, pkg, '@mastra/core'),
+      '@mastra/memory': resolveVersion(BACKEND_DIR, pkg, '@mastra/memory'),
+      '@ai-sdk/openai': resolveVersion(BACKEND_DIR, pkg, '@ai-sdk/openai'),
+      mastra: resolveVersion(BACKEND_DIR, pkg, 'mastra'),
     };
   } catch {
     // ignore
