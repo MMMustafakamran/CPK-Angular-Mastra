@@ -107,6 +107,7 @@ jobs:
       drifted: ${{ steps.check.outputs.drifted }}
       drift_state: ${{ steps.check.outputs.state }}
       should_record: ${{ steps.decide.outputs.should_record }}
+      gated: ${{ steps.decide.outputs.gated }}
     steps:
       - uses: actions/checkout@v4
 
@@ -267,12 +268,15 @@ jobs:
 
           if [ "${RUN_MODE:-}" = "checks-only" ]; then
             echo "should_record=false" >> "$GITHUB_OUTPUT"
-            echo "> Checks-only run requested -- no recording." >> "$GITHUB_STEP_SUMMARY"
+            echo "gated=false" >> "$GITHUB_OUTPUT"
+            echo "> Checks-only run requested -- stages 1 and 2 only, no recording." >> "$GITHUB_STEP_SUMMARY"
           elif [ "$GATING" = "true" ]; then
             echo "should_record=false" >> "$GITHUB_OUTPUT"
+            echo "gated=true" >> "$GITHUB_OUTPUT"
             echo "> **Pipeline stopped at stage 1.** The docs moved; recording skipped and an issue filed." >> "$GITHUB_STEP_SUMMARY"
           else
             echo "should_record=true" >> "$GITHUB_OUTPUT"
+            echo "gated=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Upload drift report
@@ -292,7 +296,9 @@ jobs:
   versions:
     name: 2. Versions & setup
     needs: prepare
-    if: needs.prepare.outputs.should_record == 'true'
+    # Not should_record: a checks-only run deliberately sets that false while
+    # still wanting this stage. What skips stage 2 is the drift gate halting.
+    if: needs.prepare.outputs.gated != 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
