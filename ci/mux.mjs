@@ -8,9 +8,9 @@
  * a thin wrapper on purpose — the mapping and the ffmpeg call live in
  * `ci/lib/mux.mjs` and stay single-sourced.
  *
- * Re-running it re-muxes: the audio is applied to the video as it is on disk,
- * so a clip that already has a track gains a second one. Re-record the clip
- * before muxing again.
+ * Re-running it is safe: the ffmpeg call maps only the video stream out of the
+ * existing clip, so a second run replaces the voiceover rather than layering a
+ * second track under it.
  */
 import { muxAudioFiles } from './lib/mux.mjs';
 
