@@ -49,13 +49,24 @@ export const PAGES = definePages([
     // Dependency manifest first, always: a demo means nothing without the
     // versions it ran against, and @copilotkit/angular is a 0.x package that
     // moves faster than its docs do.
-    ideFile: 'frontend/package.json',
-    startLine: 19,
-    endLine: 40,
+    // Leads with the versions, not the manifest. package.json declares
+    // RANGES, so this clip used to show a floor while the run it
+    // documented had installed something newer. VERSIONS.md is generated
+    // after install (ci/write-versions.mjs) and names what resolved.
+    // package.json stays as the first tab: the range is still what a
+    // reader would write in their own project.
+    ideFile: 'frontend/VERSIONS.md',
+    startLine: 6,
+    endLine: 20,
     // Then the path itself: the chat component, the Node process hosting the
     // runtime (Angular has no server route to host it in), and the Mastra agent
     // that runtime imports as source and runs in its own process.
     extraTabs: [
+      {
+        filePath: 'frontend/package.json',
+        startLine: 19,
+        endLine: 40,
+      },
       {
         filePath: 'frontend/src/app/features/quickstart/quickstart-chat.ts',
         startLine: 8,

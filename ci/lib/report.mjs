@@ -43,7 +43,7 @@ function resolveVersion(dir, pkg, name) {
   return declared === installed ? installed : `${installed} (declared ${declared})`;
 }
 
-function getPackageVersions() {
+export function getPackageVersions() {
   const versions = { frontend: {}, backend: {} };
   try {
     const pkg = JSON.parse(fs.readFileSync(path.join(FRONTEND_DIR, 'package.json'), 'utf8'));

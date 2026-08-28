@@ -46,6 +46,7 @@ import {
 } from './lib/preflight.mjs';
 import { muxAudioFiles } from './lib/mux.mjs';
 import { generateReport } from './lib/report.mjs';
+import { writeVersionsFile } from './write-versions.mjs';
 
 const OWN_FLAGS = [
   '--pull',
@@ -305,6 +306,11 @@ async function main() {
 
       installNodeDeps(FRONTEND_DIR, 'Installing Frontend Dependencies');
       installNodeDeps(RECORDER_DIR, 'Installing Autorecorder Dependencies');
+
+      // Written here, after the installs and before anything is recorded, so
+      // the file the Quickstart clip puts on screen names the versions this
+      // run actually resolved rather than the ranges package.json declares.
+      console.log(`  📌 ${writeVersionsFile()}`);
     }
 
     // 4. Server — skipped when the ports are already being served.
