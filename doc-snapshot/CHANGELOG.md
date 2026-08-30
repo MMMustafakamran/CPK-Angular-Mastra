@@ -8,6 +8,34 @@ Holds the 3 most recent dated entries. When a change lands on a fourth
 date, the oldest entry is dropped. Entries are counted, not aged, so a gap of
 weeks between changes does not expire anything.
 
+## 2026-08-30
+
+### 13:43 UTC — 2 pages, highest severity low
+
+**Low — Introduction**
+
+`/angular/mastra` · routes `/`, `/doc-sync` · under “Open Inspector and confirm setup”
+
+2 prose lines changed.
+
+````diff
+- Angular does not mount Inspector by default. First follow [Inspector for Angular](/angular/mastra/inspector). Then, on localhost, click the Inspector button.
++ On localhost, click the Inspector button in the corner of the app.
+````
+
+**Low — Quickstart**
+
+`/angular/mastra/quickstart` · route `/quickstart` · under “Open Inspector and confirm setup”
+
+2 prose lines changed.
+
+````diff
+- Angular does not mount Inspector by default. First follow [Inspector for Angular](/angular/mastra/inspector). Then, on localhost, click the Inspector button.
++ On localhost, click the Inspector button in the corner of the app.
+````
+
+---
+
 ## 2026-08-26
 
 ### 19:51 UTC — 3 pages, highest severity low
@@ -56,6 +84,8 @@ weeks between changes does not expire anything.
 - - [Enterprise Intelligence](premium/overview): add durable threads, inspection, and cloud-hosted or self-hosted operations.
 + - [CopilotKit Intelligence](premium/overview): add durable threads, inspection, and cloud-hosted or self-hosted operations.
 ````
+
+---
 
 ---
 
@@ -117,47 +147,3 @@ weeks between changes does not expire anything.
 ---
 
 ---
-
-## 2026-08-18
-
-### 06:58 UTC — 3 pages, highest severity high
-
-**High — Frontend tools and generative UI** · _local snapshot edit, not an upstream change_
-
-`/angular/mastra/guides/frontend-tools-generative-ui` · route `/frontend-tools-generative-ui` · under “Register a browser tool”
-
-29 code lines, 9 prose lines changed.
-
-````diff
-+ Call `registerFrontendTool` from an Angular injection context. The live
-+ Showcase example builds a typed tool config around a writable signal:
-- 
-+ return {
-+ name: "change_background",
-+ description: "Change the application background to a CSS gradient.",
-+ parameters: z.object({
-+ background: z.string().optional(),
-````
-
-**High — Threads** · _local snapshot edit, not an upstream change_
-
-`/angular/mastra/guides/threads-memory-attachments-headless` · routes `/threads`, `/memory`, `/attachments`, `/headless` · under “Resume a specific thread” · in a `ts` block
-
-2 code lines changed.
-
-````diff
-- 
-+ import { injectThreads } from "@copilotkit/angular";
-````
-
-**Low — Voice and multimodal input** · _local snapshot edit, not an upstream change_
-
-`/angular/mastra/guides/voice-multimodal` · route `/voice-multimodal` · under “What is voice and multimodal input?”
-
-3 prose lines changed.
-
-````diff
-- 
-+ Multimodal input attaches typed image or document content parts to that
-+ message, so a compatible model can reason about more than text.
-````

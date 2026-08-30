@@ -162,7 +162,7 @@ headless APIs, and it supports zoneless applications.
     <Step>
         ### Open Inspector and confirm setup
 
-Angular does not mount Inspector by default. First follow [Inspector for Angular](/angular/mastra/inspector). Then, on localhost, click the Inspector button.
+On localhost, click the Inspector button in the corner of the app.
 
 1. Open **Agents**, then **Agent**. Your agent is listed.
 2. Send a chat message. Open **Agents**, then **AG-UI Events**. Events are moving.
