@@ -25,3 +25,10 @@ autorecorder/videos/.temp_chunks/
 # The snapshot itself (doc-snapshot/pages/, manifest.json, CHANGELOG.md)
 # IS committed; it is the baseline every diff is taken against.
 doc-snapshot/reports/
+
+# Stray recordings saved outside autorecorder/videos/ -- a clip dropped in the
+# repo root or beside the code it shows matches none of the rules above, which
+# is how a 66MB .mp4 and a 5.9MB .webm reached `git status` untracked. Video
+# only: the voiceover assets in autorecorder/audio/ are .m4a and ARE committed.
+*.webm
+*.mp4
