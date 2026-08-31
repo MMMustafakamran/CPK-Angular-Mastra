@@ -135,6 +135,16 @@ for the equivalent `component` variance problem.
 **Voice transcription fails by design.** The microphone control renders and
 records, but no transcription service is configured on this runtime.
 
+**The Inspector step says "on localhost"; the gate is dev mode.** The quickstart
+closes with "On localhost, click the Inspector button in the corner of the app."
+`@copilotkit/angular@0.4.0` mounts `cpk-web-inspector` for you, but only when
+`shouldEnableInspector` sees `isBrowser && isDevelopment && enableInspector !==
+false` — and `isDevelopment` is Angular's `isDevMode()`, not a hostname. Under
+`ng serve` the button appears on `/quickstart/demo`; on the built bundle served
+from `http://localhost` it appears nowhere, including on the same route. This
+repo ships an SSR production server (`npm run serve:ssr:frontend`), so the step
+is reproducibly wrong for anyone who follows it against a production build.
+
 **Premium routes render locked states.** Threads and memory endpoints come from
 the CopilotKit Intelligence Platform. Without a license key the list
 stays empty and the drawer renders its locked state — that is the expected

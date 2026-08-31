@@ -18,16 +18,22 @@ Four independently-released trains meet here:
 | Wire protocol | `@ag-ui/*` | `0.0.x` |
 | Agent framework | `@mastra/*` | `1.x` |
 
-They do not move together. As of 2026-08-27:
+They do not move together. As of 2026-08-31:
 
-- `@copilotkit/angular@0.3.1` (latest) **exact-pins** `@copilotkit/core@1.66.0`,
-  `@copilotkit/shared@1.66.0`, `@copilotkit/a2ui-renderer@1.66.0` and
-  `@copilotkit/web-components@1.66.0`, while core is published at `1.69.3`.
-- `@copilotkit/core` therefore appears **twice** in the frontend tree, and the
-  split follows the architecture: the Angular client holds `1.66.0` while the
-  `channels-*` packages reached through `@copilotkit/runtime` ask for a newer
-  line. No single version satisfies both, so npm nests a private copy for each
-  side. The Angular app and the Node runtime are running different cores.
+- `@copilotkit/angular@0.4.0` (latest) **exact-pins** `@copilotkit/core@1.69.3`,
+  `@copilotkit/shared@1.69.3`, `@copilotkit/a2ui-renderer@1.69.3`,
+  `@copilotkit/web-components@1.69.3` and `@copilotkit/web-inspector@1.69.3`,
+  which is the line `@copilotkit/runtime` is on. The client caught up with core
+  in this release.
+- `@copilotkit/core` therefore appears **once** in the frontend tree, where it
+  appeared twice through `0.3.1`. That release exact-pinned the `1.66.0` line
+  while the `channels-*` packages reached through `@copilotkit/runtime` asked
+  for a newer one; no single version satisfied both, so npm nested a private
+  copy for each side and the Angular app and the Node runtime ran different
+  cores. **Do not read the single copy as permanent** — it holds only while the
+  two exact pins agree, and the next `@copilotkit/angular` that lags core
+  splits the tree again. The split is the thing to watch for; its absence today
+  is a data point, not a fix.
 - `@ag-ui/client` and `@ag-ui/core` are declared here as **`0.0.x`** — a
   wildcard, not a caret. It floats to whatever `0.0.x` is newest, while
   `@copilotkit/*` **exact-pins** `0.0.57`. Every re-resolve that lands a newer
@@ -63,7 +69,7 @@ Only one is ours to act on, so the report **classifies** rather than lists.
 
 | # | Cause | Actionable? | Detected by |
 |---|---|---|---|
-| 1 | Upstream **exact pin** (`"@copilotkit/core": "1.66.0"`) | No — report upstream | `npm view <pkg> dependencies` |
+| 1 | Upstream **exact pin** (`"@copilotkit/core": "1.69.3"`) | No — report upstream | `npm view <pkg> dependencies` |
 | 2 | **peerDependency** range (Angular 22 needs `typescript >=6.0 <6.1`) | No — correct as-is | dry-run peer/`ERESOLVE` |
 | 3 | Our own range is behind | **Yes — bump by hand** | `npm outdated`, dry-run clean |
 
@@ -164,10 +170,12 @@ upgraded, whether or not the command succeeded.
 
 ## The limit that cannot be engineered away
 
-Re-resolving only ever reaches the range boundary. It will never produce
-`@copilotkit/core@1.69.3` in the Angular client (upstream pins `1.66.0`), and it
-should never produce TypeScript 7 (Angular forbids it). Crossing the boundary is
-a human edit:
+Re-resolving only ever reaches the range boundary. It never produced
+`@copilotkit/core@1.69.3` in the Angular client while `^0.3.1` was declared —
+not because core was out of reach, but because the client that pins it was:
+`^0.3.1` stops at `<0.4.0`, and `0.4.0` is the release that moved the pin.
+Nor should it ever produce TypeScript 7 (Angular forbids it). Crossing the
+boundary is a human edit:
 
 ```bash
 git checkout -b chore/bump-<pkg>
