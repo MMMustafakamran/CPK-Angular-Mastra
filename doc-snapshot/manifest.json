@@ -103,6 +103,18 @@
       "age": 0,
       "date": "Sun, 30 Aug 2026 13:43:57 GMT"
     },
+    "/angular/mastra/inspector": {
+      "file": "angular__mastra__inspector.md",
+      "sha256": "00cb37eb132577621bacc15654c1d3af7a950aa73b2e2e32a96985e6140600e4",
+      "bytes": 2945,
+      "lines": 72,
+      "routes": [
+        "/inspector"
+      ],
+      "status": "ok",
+      "age": 0,
+      "date": "Mon, 01 Sep 2026 00:00:00 GMT"
+    },
     "/angular/mastra/quickstart": {
       "file": "angular__mastra__quickstart.md",
       "sha256": "2411034732140a73033ddef5b5b3dd1c029baaea5f2e1cc7225ed9c0d3c5e4f0",

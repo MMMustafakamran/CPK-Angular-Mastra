@@ -276,4 +276,21 @@ export const PAGES = definePages([
     prompt: 'Tell me a short joke about Angular.',
     waitAfterPromptMs: 4000,
   },
+  {
+    id: 'inspector',
+    name: 'Inspector',
+    videoName: 'Inspector',
+    docPath: 'inspector',
+    route: 'inspector',
+    // Appended rather than placed in nav order: the clip index is the position
+    // in this array, so inserting Inspector after Quickstart would renumber
+    // every later clip in this repo and desync the numbering from the sibling
+    // repos that document the same guides in the same order. See the reserved
+    // clip numbers above -- same concern, opposite direction.
+    ideFile: 'frontend/src/app/features/inspector/inspector-chat.component.ts',
+    startLine: 18,
+    endLine: 29,
+    prompt: 'Can you tell me a joke?',
+    waitAfterPromptMs: 4000,
+  },
 ]);

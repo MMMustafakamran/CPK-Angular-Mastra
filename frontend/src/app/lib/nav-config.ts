@@ -86,6 +86,15 @@ export const NAV: NavGroup[] = [
           'The smallest end-to-end path: a MastraAgent bound to the Mastra backend in Copilot Runtime, provideCopilotKit, and one copilot-chat.',
         status: 'working',
       },
+      {
+        path: '/inspector',
+        hasDemo: true,
+        title: 'Inspector',
+        docPath: '/angular/mastra/inspector',
+        summary:
+          'The Inspector @copilotkit/angular mounts for you as of 0.4.0 — nothing to install, nothing to mount, and nothing to retract here.',
+        status: 'working',
+      },
     ],
   },
   {

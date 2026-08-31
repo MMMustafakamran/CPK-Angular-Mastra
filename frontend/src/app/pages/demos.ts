@@ -16,6 +16,7 @@ import { MediaChatComponent } from '../features/attachments/media-chat.component
 import { ChatUiDemoComponent } from '../features/chat-ui/chat-ui-demo.component';
 import { HeadlessChatComponent } from '../features/headless/headless-chat.component';
 import { HitlChatComponent } from '../features/hitl/hitl-chat.component';
+import { InspectorChatComponent } from '../features/inspector/inspector-chat.component';
 import { MemoryDemoComponent } from '../features/memory/memory-demo.component';
 import { VoiceChatComponent } from '../features/media/voice-chat.component';
 import { QuickstartChat } from '../features/quickstart/quickstart-chat';
@@ -120,3 +121,12 @@ export class AttachmentsDemo {}
   ></app-demo-frame>`,
 })
 export class HeadlessDemo {}
+
+@Component({
+  selector: 'app-inspector-demo',
+  imports: [DemoFrame, InspectorChatComponent],
+  template: `<app-demo-frame backTo="/inspector"
+    ><app-inspector-chat
+  /></app-demo-frame>`,
+})
+export class InspectorDemo {}
