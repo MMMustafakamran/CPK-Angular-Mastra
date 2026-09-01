@@ -13,16 +13,28 @@ import { Callout, DocSample, Panel, SourceCode, TryIt } from '../components/ui';
       <ui-try-it>
         <p class="mt-1 text-slate-700">
           Open the demo, send <em>Can you tell me a joke?</em>, then click the
-          Inspector launcher in the top-right corner.
+          Inspector launcher in the top-right corner and walk the quickstart's
+          confirm-setup step: open <strong>Agents</strong>, pick
+          <code>default</code> in the sidebar agent selector, then open
+          <strong>AG-UI Events</strong>.
         </p>
         <p class="mt-2 text-slate-700">
-          <strong>Pass:</strong> the launcher is there without this repo
-          mounting anything. Open <strong>Agents</strong> \u2192
-          <strong>Agent</strong> and the agent is listed;
-          <strong>AG-UI Events</strong> moves as the run streams.
-          <strong>Fail:</strong> no launcher \u2014 check you are on
+          <strong>Pass:</strong> the strip at the top of the demo reads
+          <code>cpk-web-inspector mounted</code> with one element on
+          <code>document.body</code>, the launcher is there without this repo
+          mounting anything, the Agent panel shows <code>default</code> once
+          selected, and <strong>AG-UI Events</strong> has the run's events in
+          it. <strong>Fail:</strong> no launcher, or the strip stays on
+          <code>no cpk-web-inspector</code> — check you are on
           <code>ng serve</code> and not a production build, which is the one
           case where it never appears.
+        </p>
+        <p class="mt-2 text-slate-700">
+          Note the extra step. The quickstart says
+          <em>"Open Agents, then Agent. Your agent is listed"</em>, but the
+          panel opens on <code>No agent selected</code> — the agent appears
+          only after picking it from the sidebar selector, which the step does
+          not mention. The recorder performs both halves and logs each state.
         </p>
       </ui-try-it>
 
@@ -112,7 +124,27 @@ import { Callout, DocSample, Panel, SourceCode, TryIt } from '../components/ui';
       </ui-callout>
 
       <ui-panel heading="The demo">
+        <p class="mb-3 text-sm text-slate-700">
+          A chat and nothing else — the emptiness is the evidence. It mounts
+          no Inspector, and the launcher is there anyway.
+        </p>
         <ui-source path="src/app/features/inspector/inspector-chat.component.ts" />
+      </ui-panel>
+
+      <ui-panel heading="The mount check">
+        <p class="mb-3 text-sm text-slate-700">
+          The demo route carries a probe strip above the chat. It is not
+          something the guide asks for: it counts
+          <code>cpk-web-inspector</code> elements in the document and names
+          which of the guide's three cases it found — exactly one
+          (<strong>mounted</strong>, the documented result), none
+          (<strong>absent</strong>, nothing on the route has injected the
+          <code>CopilotKit</code> service yet), or more than one
+          (<strong>duplicate</strong>, the state a leftover hand-written mount
+          produces). Without it the only evidence in a recording is a launcher
+          in one corner of the frame, which is not something a viewer can read.
+        </p>
+        <ui-source path="src/app/features/inspector/inspector-probe.component.ts" />
       </ui-panel>
     </div>
   `,
