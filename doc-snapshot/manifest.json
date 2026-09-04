@@ -1,12 +1,12 @@
 {
   "schema": 1,
   "docsRoot": "https://docs.copilotkit.ai/angular/mastra",
-  "syncedAt": "2026-08-30T13:43:56.719Z",
+  "syncedAt": "2026-09-04T07:57:49.012Z",
   "pages": {
     "/angular/mastra": {
       "file": "angular__mastra.md",
-      "sha256": "2411034732140a73033ddef5b5b3dd1c029baaea5f2e1cc7225ed9c0d3c5e4f0",
-      "bytes": 7132,
+      "sha256": "737c5aaf634db93773f20df9821ef93913b9c373c9c18b233156fe1644c125a3",
+      "bytes": 7137,
       "lines": 185,
       "routes": [
         "/",
@@ -14,7 +14,7 @@
       ],
       "status": "ok",
       "age": 0,
-      "date": "Sun, 30 Aug 2026 13:43:57 GMT"
+      "date": "Fri, 04 Sep 2026 07:57:49 GMT"
     },
     "/angular/mastra/guides/a2ui": {
       "file": "angular__mastra__guides__a2ui.md",
@@ -42,15 +42,15 @@
     },
     "/angular/mastra/guides/frontend-tools-generative-ui": {
       "file": "angular__mastra__guides__frontend-tools-generative-ui.md",
-      "sha256": "06e3972276969986984eec48f4145c90114a9e4efeb350c0051c14c67460b98b",
-      "bytes": 5728,
-      "lines": 178,
+      "sha256": "57e5ce1cf21da60734cceaa3f48c733241abb7ab8456bd4afc1a98b4e8967d85",
+      "bytes": 7884,
+      "lines": 236,
       "routes": [
         "/frontend-tools-generative-ui"
       ],
       "status": "ok",
       "age": 0,
-      "date": "Sun, 30 Aug 2026 13:43:57 GMT"
+      "date": "Fri, 04 Sep 2026 07:57:49 GMT"
     },
     "/angular/mastra/guides/human-in-the-loop": {
       "file": "angular__mastra__guides__human-in-the-loop.md",
@@ -117,15 +117,15 @@
     },
     "/angular/mastra/quickstart": {
       "file": "angular__mastra__quickstart.md",
-      "sha256": "2411034732140a73033ddef5b5b3dd1c029baaea5f2e1cc7225ed9c0d3c5e4f0",
-      "bytes": 7132,
+      "sha256": "737c5aaf634db93773f20df9821ef93913b9c373c9c18b233156fe1644c125a3",
+      "bytes": 7137,
       "lines": 185,
       "routes": [
         "/quickstart"
       ],
       "status": "ok",
       "age": 0,
-      "date": "Sun, 30 Aug 2026 13:43:57 GMT"
+      "date": "Fri, 04 Sep 2026 07:57:49 GMT"
     }
   },
   "sitemap": {
