@@ -179,9 +179,13 @@ export const PAGES = definePages([
     ideFile: 'frontend/src/app/features/media/voice-chat.component.ts',
     startLine: 10,
     endLine: 27,
-    // The microphone records; this runtime configures no transcription service,
-    // so transcription fails by design. The handler shows that and says so.
-    prompt: 'Tell me what you can do with images and voice.',
+    // The guide's walkthrough is attach-then-microphone, so the clip does both.
+    // The prompt asks for values that exist only inside the attached chart, so
+    // the reply is evidence the file reached the model rather than something
+    // answerable from the system prompt. The microphone then records, and this
+    // runtime configures no transcription service, so transcription fails by
+    // design — the handler shows that and says so.
+    prompt: 'Read the attached chart. What is its title, and what is the Q4 value?',
     waitAfterPromptMs: 4000,
   },
   {

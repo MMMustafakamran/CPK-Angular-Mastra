@@ -6,11 +6,13 @@
  * muxed the same track onto the already-muxed file. Muxing happens once, where
  * the video is produced; the workflow just installs ffmpeg and lets this run.
  *
- * Two pages carry a voiceover: Shared State and Threads. The tracks live in
- * `autorecorder/audio/` and are shared verbatim by all three Angular repos —
- * the narration is about the CopilotKit concept, not the agent framework behind
- * it, so the same recording fits AGNO-, MASTRA- and MSPY-angular. Every other
- * clip stays silent and is skipped by the table below.
+ * Four pages carry a voiceover: Frontend Tools & Generative UI, Voice &
+ * multimodal, Shared State and Threads. The tracks live in
+ * `autorecorder/audio/` and are shared verbatim by the Angular repos — the
+ * narration is about the CopilotKit concept, not the agent framework behind it,
+ * and all of them now run the same handler for these pages, so one recording
+ * fits AG2-, AGNO-, DAPY-, MASTRA- and MSPY-angular. Every other clip stays
+ * silent and is skipped by the table below.
  *
  * WebM cannot carry AAC — audio is re-encoded to libopus. Missing ffmpeg is a
  * skip, not a failure: a silent demo still beats no demo.
@@ -27,11 +29,23 @@ import { AUDIO_DIR, VIDEOS_DIR } from './config.mjs';
  *
  * The mapping is explicit rather than inferred from filenames, so a renamed
  * demo drops its voiceover visibly instead of quietly muxing it onto the wrong
- * clip. Both matches are unique across this repo's `videoName`s.
+ * clip. All four matches are unique across this repo's `videoName`s.
  *
  * @type {{ audioFile: string, videoMatch: string }[]}
  */
 const AUDIO_TRACKS = [
+  {
+    audioFile: 'angular-frontendtoolsv1.71.m4a',
+    videoMatch: 'FrontendToolsGenerativeUi',
+  },
+  {
+    // Both halves of the voice/multimodal clip are narrated: the attachment
+    // that works, then the transcription that has no service behind it. The
+    // handler films them in that order, so the track only lines up with a clip
+    // recorded by the current actions/voice.action.ts.
+    audioFile: 'angular- voice and attachments.m4a',
+    videoMatch: 'VoiceMultimodal',
+  },
   {
     audioFile: 'sharedstate-angular.m4a',
     videoMatch: 'SharedState',
