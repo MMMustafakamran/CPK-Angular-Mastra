@@ -106,7 +106,7 @@ Docs last synced **2026-08-26**.
 | [/](https://docs.copilotkit.ai/angular/mastra) | Reference | Landing page — orientation and a live connection check |
 | [/quickstart](https://docs.copilotkit.ai/angular/mastra/quickstart) | Working | |
 | [/chat-ui](https://docs.copilotkit.ai/angular/mastra/guides/chat-ui) | Working | |
-| [/frontend-tools-generative-ui](https://docs.copilotkit.ai/angular/mastra/guides/frontend-tools-generative-ui) | Working | |
+| [/frontend-tools-generative-ui](https://docs.copilotkit.ai/angular/mastra/guides/frontend-tools-generative-ui) | Partial | All three tool paths are live; the guide's "Let the agent display one of your components" snippet is wrong four ways — see Known issues |
 | [/a2ui](https://docs.copilotkit.ai/angular/mastra/guides/a2ui) | Partial | Inert until a catalog is supplied — see Known issues |
 | [/voice-multimodal](https://docs.copilotkit.ai/angular/mastra/guides/voice-multimodal) | Partial | Microphone records, but no transcription service is configured |
 | [/human-in-the-loop](https://docs.copilotkit.ai/angular/mastra/guides/human-in-the-loop) | Working | Tool path is live; interrupt panel idles until the agent suspends a tool. The guide's `store().interruptController` section is unimplemented — that API is in no published build |
@@ -125,6 +125,52 @@ The nav, route headers, and this table all describe a page exactly once.
 `a2uiEnabled: true`, but supplying `a2ui.catalog` is what actually registers the
 `render_a2ui` renderer. The guide's catalog snippet is not self-contained, so
 `app.config.ts` sets only `a2ui.recovery` and the A2UI route renders nothing.
+
+**The guide's new `registerComponent` section runs, and its snippet is wrong
+four ways.** The frontend-tools guide now opens with "Let the agent display one
+of your components", which registers a standalone component as a display-only
+tool — no `handler`, nothing on the agent side. The premise holds:
+`show_incident` is declared by the browser, forwarded over AG-UI, and called by
+the model with the Mastra agent definition untouched. Implemented verbatim at
+`@copilotkit/angular` 0.5.1, the published snippet then fails four ways, all
+reproduced against a live agent:
+
+1. **Every call produces a second turn nobody asked for.** With no `handler`,
+   core writes an empty tool result and the model is always handed another
+   turn. What lands there is model-dependent: this repo's `gpt-5.4` emits
+   filler ("Here it is.") under a card that already said everything, while the
+   `gpt-4o-mini` sibling repos get a false apology contradicting the correct
+   card above it. `followUp: false` removes the turn —
+   `RegisterComponentConfig` carries the field and the guide never mentions it.
+2. **The loading guard never fires.** It gates on `status === "in-progress"`;
+   the observed status while arguments stream is `"executing"`, so the `@else`
+   branch runs with empty args and paints a blank card before the values land.
+3. **The status never reaches `"complete"`.** Sampled once a second for 25
+   seconds: `"executing"` throughout. The `registerRenderToolCall` snippet
+   higher up the same page gates its content on `"complete"`, so that
+   documented pattern applied to a display-only tool loads forever.
+4. **The card is not a card.** The snippet ships no CSS and pairs an inline
+   `<strong>` with an inline `<span>`; Angular's default
+   `preserveWhitespaces: false` strips the gap, so it renders as the unstyled
+   run-together string `INC-4711sev1`.
+
+Smaller gaps: the registration fence shows no imports, so `registerComponent`
+and `z` are undefined identifiers as published; the section never says it must
+run in an Angular injection context though the API reference requires one; and
+the `description` you pass reaches the model behind a prepended preamble. Note
+also that the two renderers on that one page disagree: the older "Render a tool
+result" snippet imports `{ type AngularToolCall, type ToolRenderer }` and sets
+no `standalone`, while the new one imports the same symbols as values and sets
+`standalone: true` — which `frontend/AGENTS.md` forbids. Kept as published
+either way, at
+[`src/app/features/tools/incident-card.component.ts`](frontend/src/app/features/tools/incident-card.component.ts)
+and in `tools-chat.component.ts`.
+
+*Note, not a finding:* `registerComponent` does not exist in
+`@copilotkit/angular` 0.4.0, which this repo declared until now, and `^0.4.0`
+can never reach 0.5.x. The quickstart's unpinned install gives a new reader
+0.5.1, so the frontend moved to `^0.5.1` (and `@copilotkit/runtime` to
+`^1.70.1`, which 0.5.1 pins) to QA the section at all.
 
 **`SandboxFunction` variance.** `openGenerativeUI.sandboxFunctions` is typed
 `SandboxFunction[]`, i.e. `SandboxFunction<Record<string, unknown>>[]`, so the

@@ -117,19 +117,37 @@ export const PAGES = definePages([
     docPath: 'guides/frontend-tools-generative-ui',
     route: 'frontend-tools-generative-ui',
     ideFile: 'frontend/src/app/features/tools/tools-chat.component.ts',
-    startLine: 34,
-    endLine: 60,
+    // The class declaration through its closing brace: all three of the
+    // guide's paths in one frame, now that registerComponent is a live call
+    // rather than a commented-out stand-in. Re-counted after that swap.
+    startLine: 55,
+    endLine: 77,
     extraTabs: [
       {
         filePath: 'frontend/src/app/features/tools/weather-card.component.ts',
         startLine: 10,
         endLine: 27,
       },
+      // The guide's "Let the agent display one of your components" renderer,
+      // verbatim. Its `@if (call.status === "in-progress")` guard is the second
+      // finding on camera: the real status is "executing", so the guard never
+      // fires and the @else branch paints an empty card until the args land.
+      {
+        filePath: 'frontend/src/app/features/tools/incident-card.component.ts',
+        startLine: 10,
+        endLine: 27,
+      },
     ],
-    // Two turns: a server-side tool the browser only renders, then a frontend
-    // tool whose result is the page itself repainting.
+    // Three turns: a server-side tool the browser only renders, a frontend tool
+    // whose result is the page itself repainting, and the new display-only
+    // registration — which draws the right card and then makes the agent
+    // apologise for it.
     prompt: "What's the weather in Tokyo?",
-    prompts: ["What's the weather in Tokyo?", 'Change the background to violet'],
+    prompts: [
+      "What's the weather in Tokyo?",
+      'Change the background to violet',
+      'Show me incident INC-4711, severity sev1.',
+    ],
     waitAfterPromptMs: 4000,
   },
   {
