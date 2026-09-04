@@ -16,6 +16,8 @@ import { type PageActionHandler, type PageRecordConfig } from '../core/types';
 export const runHitlAction: PageActionHandler = async (
   page: Page,
   config: PageRecordConfig,
+  _rootPath,
+  ctx,
 ) => {
   console.log(`   🛡️ Asking for something consequential enough to need approval...`);
   const msgCount = await sendPrompt(page, config.prompt);
@@ -30,9 +32,9 @@ export const runHitlAction: PageActionHandler = async (
     // Not fatal here: the reply still has to arrive, and the completion wait
     // below is what decides whether this page passed. But the whole point of
     // the page is the interrupt, so say plainly that it did not happen.
-    console.warn(
-      `   ⚠️ app-approval-card never appeared — the agent answered without ` +
-        `calling requestApproval, so nothing was paused.`,
+    ctx.fail(
+      'app-approval-card never appeared -- the agent answered without calling ' +
+        'requestApproval, so nothing was paused.',
     );
   } else {
     await sleep(1500);
@@ -47,6 +49,7 @@ export const runHitlAction: PageActionHandler = async (
       await sleep(600);
       await humanClick(page);
     } else {
+      ctx.warn('Approval card rendered but no Approve button was found on it.');
       await approveBtn.click().catch(() => {});
     }
   }

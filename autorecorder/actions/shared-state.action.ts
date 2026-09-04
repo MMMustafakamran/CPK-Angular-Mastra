@@ -27,16 +27,16 @@ import { type Page } from 'playwright';
 import { sendPrompt, waitForAgentResponseCompletion } from '../core/actions';
 import { SELECTORS } from '../config/selectors.config';
 import { humanClick, humanGlide, sleep } from '../core/overlays/cursor';
-import { type PageActionHandler, type PageRecordConfig } from '../core/types';
+import { type ActionContext, type PageActionHandler, type PageRecordConfig } from '../core/types';
 
 import { closeNotepadNote, openNotepadWindow, typeInNotepad } from './notepad';
 
 /** Clicks one of the demo's write buttons, if it is on screen. */
-async function clickWrite(page: Page, selector: string, label: string): Promise<void> {
+async function clickWrite(ctx: ActionContext, page: Page, selector: string, label: string): Promise<void> {
   const button = page.locator(selector).first();
   const box = await button.boundingBox().catch(() => null);
   if (!box) {
-    console.warn(`   ⚠️ "${label}" not found — the agent will read the default value.`);
+    ctx.warn(`"${label}" not found -- the agent read the default value instead of a written one.`);
     return;
   }
   await humanGlide(page, box.x + box.width / 2, box.y + box.height / 2, 20);
@@ -48,10 +48,11 @@ async function clickWrite(page: Page, selector: string, label: string): Promise<
 export const runSharedStateAction: PageActionHandler = async (
   page: Page,
   config: PageRecordConfig,
+  _rootPath,
+  ctx,
 ) => {
   console.log(`   🔄 Writing state from the browser first...`);
-  await clickWrite(
-    page,
+  await clickWrite(ctx, page,
     'app-workspace button:has-text("Mark high priority")',
     'Mark high priority',
   );
@@ -59,8 +60,7 @@ export const runSharedStateAction: PageActionHandler = async (
   // Second write: a signal the context accessor reads, so the re-registration
   // would be observable in the same answer.
   console.log(`   🌍 Switching the account timezone to Europe/London...`);
-  await clickWrite(
-    page,
+  await clickWrite(ctx, page,
     'app-account-context button:has-text("Use London time")',
     'Use London time',
   );

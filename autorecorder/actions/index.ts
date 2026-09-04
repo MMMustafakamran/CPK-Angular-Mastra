@@ -22,9 +22,17 @@
  *
  * Pass that returned count into waitForAgentResponseCompletion on multi-turn
  * pages, or the previous turn's reply is mistaken for this one's.
+ *
+ * The fourth argument, `ctx`, is how a handler reports what it saw:
+ *
+ *   ctx.warn('"Mark high priority" button not found')  -> [PASS*] with the note
+ *   ctx.fail('approval card never rendered')           -> [FAIL], clip still saved
+ *
+ * A `console.warn` reaches nobody: the summary, videos/RECORD_RESULTS.json and
+ * the CI report only see what goes through `ctx`.
  */
 
-import { type PageActionHandler, type PageRecordConfig } from '../core/types';
+import { type ActionContext, type PageActionHandler, type PageRecordConfig } from '../core/types';
 import { runStandardAction } from '../core/actions';
 import { type Page } from 'playwright';
 
@@ -67,6 +75,7 @@ export async function executePageAction(
   page: Page,
   config: PageRecordConfig,
   rootPath: string,
+  ctx: ActionContext,
 ): Promise<void> {
   // One gate for every page, including the ones that fall through to
   // runStandardAction. The engine waits for the route to respond and for
@@ -77,5 +86,5 @@ export async function executePageAction(
   await waitForPageReady(page, { label: config.id });
 
   const handler = ACTION_MAP[config.id] ?? runStandardAction;
-  await handler(page, config, rootPath);
+  await handler(page, config, rootPath, ctx);
 }
